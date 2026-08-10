@@ -1,0 +1,1 @@
+-- Seed data will be added together with the first domain migration in Phase 3.
