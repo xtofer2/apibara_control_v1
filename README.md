@@ -43,6 +43,8 @@ La Fase 4 incluye:
 - rechazo de perfiles inactivos o inexistentes
 - navegación preparada según los roles `EMPLOYEE`, `MANAGER` y `ADMIN`
 
+La Fase 5 añade políticas RLS y comprobaciones server-side para separar operaciones de empleados, supervisión gerencial y configuración administrativa. La matriz completa está en `docs/PHASE_5_AUTHORIZATION.md`.
+
 Las credenciales locales deben permanecer únicamente en `.env.local`.
 
 ## Verificación
@@ -51,6 +53,7 @@ Las credenciales locales deben permanecer únicamente en `.env.local`.
 npm run lint
 npm run typecheck
 npm run build
+npm run db:test
 ```
 
 ## Arquitectura

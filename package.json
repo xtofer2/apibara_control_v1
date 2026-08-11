@@ -14,7 +14,8 @@
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "db:reset": "supabase db reset --local",
-    "db:types": "supabase gen types typescript --local > src/types/database.generated.ts"
+    "db:types": "supabase gen types typescript --local > src/types/database.generated.ts",
+    "db:test": "supabase test db"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

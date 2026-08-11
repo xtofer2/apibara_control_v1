@@ -57,11 +57,11 @@ export default async function DashboardPage() {
           <div>
             <p className="text-sm font-semibold text-orange-300">Próxima fase</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-              Autorización y políticas RLS
+              Catálogos operativos
             </h2>
             <p className="mt-3 max-w-2xl leading-7 text-stone-400">
-              Los permisos de empleados, gerentes y administradores se
-              aplicarán tanto en servidor como en PostgreSQL.
+              Las sedes, productos y métodos de pago se conectarán al panel
+              usando los permisos que ya protege PostgreSQL.
             </p>
           </div>
           <ArrowRight aria-hidden="true" className="size-6 text-orange-300" />
