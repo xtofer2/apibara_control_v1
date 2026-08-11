@@ -1,1 +1,2 @@
--- Seed data will be added together with the first domain migration in Phase 3.
+-- Deterministic catalog data is part of the initial schema migration.
+-- This file is reserved for local-only development fixtures in later phases.
