@@ -32,6 +32,19 @@ npm run supabase:stop
 
 La configuración del CLI está en `supabase/config.toml`. Las migraciones futuras se guardarán en `supabase/migrations/`.
 
+## Acceso al sistema
+
+Los usuarios se crean en Supabase Auth. Al crear una cuenta, la base de datos genera automáticamente su perfil operativo con rol `EMPLOYEE`; un administrador puede asignar después el rol y estado correspondientes.
+
+La Fase 4 incluye:
+
+- inicio y cierre de sesión con Supabase Auth
+- rutas del panel protegidas en servidor
+- rechazo de perfiles inactivos o inexistentes
+- navegación preparada según los roles `EMPLOYEE`, `MANAGER` y `ADMIN`
+
+Las credenciales locales deben permanecer únicamente en `.env.local`.
+
 ## Verificación
 
 ```bash
@@ -46,4 +59,4 @@ La aplicación usa Next.js con App Router, TypeScript, Tailwind CSS y shadcn/ui.
 
 Antes de desarrollar una fase, leer `AGENTS.md`, los documentos de `docs/` y la [revisión de arquitectura](docs/ARCHITECTURE_REVIEW.md).
 
-La infraestructura SSR de Supabase ya está preparada. El esquema de PostgreSQL y la interfaz de autenticación se incorporarán en las fases siguientes del plan de implementación.
+La infraestructura SSR de Supabase, el esquema inicial de PostgreSQL y el acceso autenticado al panel ya están preparados. Los permisos detallados por dominio y sus políticas RLS se incorporarán de forma incremental en las siguientes fases.
