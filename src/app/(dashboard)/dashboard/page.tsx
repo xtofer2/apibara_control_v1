@@ -57,11 +57,11 @@ export default async function DashboardPage() {
           <div>
             <p className="text-sm font-semibold text-orange-300">Próxima fase</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-              Control de asistencia
+              Turnos y apertura
             </h2>
             <p className="mt-3 max-w-2xl leading-7 text-stone-400">
-              Los empleados podrán registrar su entrada y salida por sede, y
-              los gerentes consultar la asistencia diaria.
+              Los empleados podrán abrir la jornada operativa de una sede con
+              inventario inicial y efectivo físico.
             </p>
           </div>
           <ArrowRight aria-hidden="true" className="size-6 text-orange-300" />

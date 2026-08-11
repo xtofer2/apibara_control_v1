@@ -700,7 +700,62 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      attendance_check_in: {
+        Args: { selected_location_id: string }
+        Returns: {
+          check_in_at: string
+          check_out_at: string | null
+          created_at: string
+          id: string
+          location_id: string
+          updated_at: string
+          user_id: string
+          work_date: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "attendance"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      attendance_check_out: {
+        Args: never
+        Returns: {
+          check_in_at: string
+          check_out_at: string | null
+          created_at: string
+          id: string
+          location_id: string
+          updated_at: string
+          user_id: string
+          work_date: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "attendance"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      attendance_manager_report: {
+        Args: {
+          selected_date: string
+          selected_location_id?: string
+          selected_user_id?: string
+        }
+        Returns: {
+          check_in_at: string
+          check_out_at: string
+          employee_name: string
+          id: string
+          location_code: string
+          location_id: string
+          location_name: string
+          user_id: string
+          work_date: string
+        }[]
+      }
     }
     Enums: {
       app_role: "EMPLOYEE" | "MANAGER" | "ADMIN"

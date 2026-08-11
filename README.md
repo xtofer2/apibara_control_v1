@@ -47,6 +47,8 @@ La Fase 5 añade políticas RLS y comprobaciones server-side para separar operac
 
 La Fase 6 incorpora catálogos reales de sedes, productos y métodos de pago. Los usuarios activos pueden consultarlos y los administradores pueden crear, editar, activar o desactivar sedes y productos sin borrado físico.
 
+La Fase 7 incorpora entrada y salida de asistencia con timestamps de servidor, una sola jornada abierta por usuario y consulta gerencial filtrable por fecha, sede y empleado.
+
 Las credenciales locales deben permanecer únicamente en `.env.local`.
 
 ## Verificación

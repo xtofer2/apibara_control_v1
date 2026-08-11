@@ -170,13 +170,11 @@ select results_eq(
 
 select lives_ok(
   $$
-    insert into public.attendance (user_id, location_id)
-    values (
-      '40000000-0000-4000-8000-000000000001',
+    select public.attendance_check_in(
       '10000000-0000-4000-8000-000000000001'
     )
   $$,
-  'an employee can register their own attendance'
+  'an employee can register attendance through the controlled function'
 );
 
 select throws_ok(
@@ -188,8 +186,8 @@ select throws_ok(
     )
   $$,
   '42501',
-  'new row violates row-level security policy for table "attendance"',
-  'an employee cannot register attendance for another user'
+  'permission denied for table attendance',
+  'an employee cannot bypass the function to register another user'
 );
 
 select lives_ok(
@@ -371,14 +369,12 @@ select results_eq(
 
 select throws_ok(
   $$
-    insert into public.attendance (user_id, location_id)
-    values (
-      '40000000-0000-4000-8000-000000000004',
+    select public.attendance_check_in(
       '10000000-0000-4000-8000-000000000001'
     )
   $$,
   '42501',
-  'new row violates row-level security policy for table "attendance"',
+  'ATTENDANCE_FORBIDDEN',
   'an inactive user cannot create operational records'
 );
 

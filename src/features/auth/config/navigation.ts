@@ -27,7 +27,7 @@ const employeeItems: NavigationItem[] = [
     label: "Asistencia",
     href: "/dashboard/attendance",
     icon: "attendance",
-    available: false,
+    available: true,
   },
   {
     label: "Turno operativo",
