@@ -5,12 +5,24 @@ export type AppRole = Database["public"]["Enums"]["app_role"];
 export type NavigationItem = {
   label: string;
   href: string;
-  icon: "home" | "attendance" | "shift" | "reports" | "settings";
+  icon:
+    | "home"
+    | "catalogs"
+    | "attendance"
+    | "shift"
+    | "reports"
+    | "settings";
   available: boolean;
 };
 
 const employeeItems: NavigationItem[] = [
   { label: "Inicio", href: "/dashboard", icon: "home", available: true },
+  {
+    label: "Catálogos",
+    href: "/dashboard/catalogs",
+    icon: "catalogs",
+    available: true,
+  },
   {
     label: "Asistencia",
     href: "/dashboard/attendance",
@@ -39,7 +51,7 @@ const adminItems: NavigationItem[] = [
     label: "Administración",
     href: "/dashboard/admin",
     icon: "settings",
-    available: false,
+    available: true,
   },
 ];
 

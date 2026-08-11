@@ -1,6 +1,9 @@
 import { Settings } from "lucide-react";
+import Link from "next/link";
 
+import { buttonVariants } from "@/components/ui/button";
 import { requirePermission } from "@/features/auth/server/require-permission";
+import { cn } from "@/lib/utils";
 
 export default async function AdminAccessPage() {
   await requirePermission("configuration.manage");
@@ -14,8 +17,14 @@ export default async function AdminAccessPage() {
         Acceso administrativo verificado
       </h1>
       <p className="mt-3 max-w-2xl leading-7 text-stone-600">
-        Tu rol permite administrar la configuración. Los formularios se habilitarán desde la Fase 6.
+        Tu rol permite administrar la configuración y los catálogos operativos.
       </p>
+      <Link
+        className={cn(buttonVariants(), "mt-6 bg-orange-600 text-white hover:bg-orange-700")}
+        href="/dashboard/catalogs"
+      >
+        Gestionar catálogos
+      </Link>
     </section>
   );
 }

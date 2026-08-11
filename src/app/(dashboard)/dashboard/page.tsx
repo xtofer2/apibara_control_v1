@@ -57,11 +57,11 @@ export default async function DashboardPage() {
           <div>
             <p className="text-sm font-semibold text-orange-300">Próxima fase</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-              Catálogos operativos
+              Control de asistencia
             </h2>
             <p className="mt-3 max-w-2xl leading-7 text-stone-400">
-              Las sedes, productos y métodos de pago se conectarán al panel
-              usando los permisos que ya protege PostgreSQL.
+              Los empleados podrán registrar su entrada y salida por sede, y
+              los gerentes consultar la asistencia diaria.
             </p>
           </div>
           <ArrowRight aria-hidden="true" className="size-6 text-orange-300" />

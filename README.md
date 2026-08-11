@@ -45,6 +45,8 @@ La Fase 4 incluye:
 
 La Fase 5 añade políticas RLS y comprobaciones server-side para separar operaciones de empleados, supervisión gerencial y configuración administrativa. La matriz completa está en `docs/PHASE_5_AUTHORIZATION.md`.
 
+La Fase 6 incorpora catálogos reales de sedes, productos y métodos de pago. Los usuarios activos pueden consultarlos y los administradores pueden crear, editar, activar o desactivar sedes y productos sin borrado físico.
+
 Las credenciales locales deben permanecer únicamente en `.env.local`.
 
 ## Verificación

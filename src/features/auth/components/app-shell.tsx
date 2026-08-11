@@ -4,6 +4,7 @@ import {
   Clock3,
   Home,
   LogOut,
+  PackageSearch,
   Settings,
 } from "lucide-react";
 import Link from "next/link";
@@ -18,6 +19,7 @@ import type { CurrentProfile } from "@/features/auth/server/profile-repository";
 
 const icons = {
   home: Home,
+  catalogs: PackageSearch,
   attendance: CalendarCheck2,
   shift: Clock3,
   reports: BarChart3,

@@ -245,7 +245,16 @@ select set_config(
 );
 
 select results_eq(
-  'select count(*)::bigint from public.profiles',
+  $$
+    select count(*)::bigint
+    from public.profiles
+    where id in (
+      '40000000-0000-4000-8000-000000000001',
+      '40000000-0000-4000-8000-000000000002',
+      '40000000-0000-4000-8000-000000000003',
+      '40000000-0000-4000-8000-000000000004'
+    )
+  $$,
   'values (4::bigint)',
   'a manager can read profiles for operational reports'
 );

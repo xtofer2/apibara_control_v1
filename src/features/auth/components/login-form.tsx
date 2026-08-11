@@ -39,7 +39,7 @@ export function LoginForm() {
   });
 
   return (
-    <form className="space-y-5" onSubmit={onSubmit} noValidate>
+    <form className="space-y-5" method="post" onSubmit={onSubmit} noValidate>
       <div className="space-y-2">
         <label className="text-sm font-medium text-stone-700" htmlFor="email">
           Correo
