@@ -803,6 +803,40 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      management_reconciliation_report: {
+        Args: {
+          selected_date: string
+          selected_location_id?: string
+          selected_user_id?: string
+        }
+        Returns: {
+          calculated_sales: number
+          cash_amount: number
+          closed_at: string
+          closed_by_name: string
+          closing_quantity: number
+          closing_total: number
+          entry_quantity: number
+          location_code: string
+          location_id: string
+          location_name: string
+          negative_adjustment_quantity: number
+          opened_at: string
+          opened_by_name: string
+          opening_quantity: number
+          operational_date: string
+          positive_adjustment_quantity: number
+          product_code: string
+          product_id: string
+          product_name: string
+          received_transfer_quantity: number
+          sent_transfer_quantity: number
+          unit_type: Database["public"]["Enums"]["product_unit"]
+          waste_quantity: number
+          work_shift_id: string
+          yape_amount: number
+        }[]
+      }
       open_operational_shift: {
         Args: {
           selected_cash_opening: number

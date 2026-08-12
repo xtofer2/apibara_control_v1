@@ -57,11 +57,11 @@ export default async function DashboardPage() {
           <div>
             <p className="text-sm font-semibold text-orange-300">Próxima fase</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-              Ventas calculadas y reportes
+              Auditoría de operaciones críticas
             </h2>
             <p className="mt-3 max-w-2xl leading-7 text-stone-400">
-              Gerencia podrá revisar ventas calculadas, conciliaciones de
-              inventario y totales de pagos por fecha y sede.
+              La siguiente etapa consolidará la trazabilidad de aperturas,
+              cierres, movimientos y transferencias sensibles.
             </p>
           </div>
           <ArrowRight aria-hidden="true" className="size-6 text-orange-300" />

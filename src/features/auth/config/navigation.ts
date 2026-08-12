@@ -63,7 +63,7 @@ const managerItems: NavigationItem[] = [
     label: "Reportes",
     href: "/dashboard/reports",
     icon: "reports",
-    available: false,
+    available: true,
   },
 ];
 

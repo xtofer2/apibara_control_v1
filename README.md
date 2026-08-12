@@ -57,6 +57,8 @@ La Fase 10 incorpora envío y recepción transaccional de transferencias entre s
 
 La Fase 11 incorpora el cierre transaccional del turno con conteo físico final y pagos separados en efectivo y Yape.
 
+La Fase 12 incorpora ventas calculadas por producto y un tablero gerencial de conciliación por fecha, sede y participación de empleado, sin persistir ventas ni totales redundantes.
+
 Las credenciales locales deben permanecer únicamente en `.env.local`.
 
 ## Verificación
