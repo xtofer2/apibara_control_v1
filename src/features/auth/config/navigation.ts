@@ -14,6 +14,7 @@ export type NavigationItem = {
     | "transfers"
     | "closing"
     | "reports"
+    | "audit"
     | "settings";
   available: boolean;
 };
@@ -63,6 +64,12 @@ const managerItems: NavigationItem[] = [
     label: "Reportes",
     href: "/dashboard/reports",
     icon: "reports",
+    available: true,
+  },
+  {
+    label: "Auditoría",
+    href: "/dashboard/audit",
+    icon: "audit",
     available: true,
   },
 ];

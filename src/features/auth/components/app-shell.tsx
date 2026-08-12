@@ -7,6 +7,7 @@ import {
   LogOut,
   PackagePlus,
   PackageSearch,
+  ScrollText,
   Settings,
   Truck,
 } from "lucide-react";
@@ -29,6 +30,7 @@ const icons = {
   transfers: Truck,
   closing: CircleCheckBig,
   reports: BarChart3,
+  audit: ScrollText,
   settings: Settings,
 };
 

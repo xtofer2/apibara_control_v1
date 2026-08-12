@@ -59,6 +59,8 @@ La Fase 11 incorpora el cierre transaccional del turno con conteo físico final 
 
 La Fase 12 incorpora ventas calculadas por producto y un tablero gerencial de conciliación por fecha, sede y participación de empleado, sin persistir ventas ni totales redundantes.
 
+La Fase 13 incorpora auditoría inmutable para operaciones críticas y cambios administrativos, con consulta gerencial filtrable por fecha, acción y responsable.
+
 Las credenciales locales deben permanecer únicamente en `.env.local`.
 
 ## Verificación

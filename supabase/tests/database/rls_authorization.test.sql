@@ -255,7 +255,7 @@ select results_eq(
 );
 
 select results_eq(
-  'select count(*)::bigint from public.audit_logs',
+  $$select count(*)::bigint from public.audit_logs where action = 'TEST_ACTION'$$,
   'values (1::bigint)',
   'a manager can read audit logs'
 );
