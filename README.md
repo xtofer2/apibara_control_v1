@@ -49,6 +49,8 @@ La Fase 6 incorpora catálogos reales de sedes, productos y métodos de pago. Lo
 
 La Fase 7 incorpora entrada y salida de asistencia con timestamps de servidor, una sola jornada abierta por usuario y consulta gerencial filtrable por fecha, sede y empleado.
 
+La Fase 8 incorpora la apertura transaccional de turnos con efectivo físico y un conteo inicial obligatorio para cada producto activo.
+
 Las credenciales locales deben permanecer únicamente en `.env.local`.
 
 ## Verificación

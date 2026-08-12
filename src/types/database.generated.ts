@@ -756,6 +756,29 @@ export type Database = {
           work_date: string
         }[]
       }
+      open_operational_shift: {
+        Args: {
+          selected_cash_opening: number
+          selected_items: Json
+          selected_location_id: string
+        }
+        Returns: {
+          closed_at: string | null
+          created_at: string
+          id: string
+          location_id: string
+          opened_at: string
+          operational_date: string
+          status: Database["public"]["Enums"]["shift_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "work_shifts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       app_role: "EMPLOYEE" | "MANAGER" | "ADMIN"
