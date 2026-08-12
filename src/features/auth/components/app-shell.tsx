@@ -1,6 +1,7 @@
 import {
   BarChart3,
   CalendarCheck2,
+  CircleCheckBig,
   Clock3,
   Home,
   LogOut,
@@ -26,6 +27,7 @@ const icons = {
   shift: Clock3,
   inventory: PackagePlus,
   transfers: Truck,
+  closing: CircleCheckBig,
   reports: BarChart3,
   settings: Settings,
 };

@@ -12,6 +12,7 @@ export type NavigationItem = {
     | "shift"
     | "inventory"
     | "transfers"
+    | "closing"
     | "reports"
     | "settings";
   available: boolean;
@@ -47,6 +48,12 @@ const employeeItems: NavigationItem[] = [
     label: "Transferencias",
     href: "/dashboard/transfers",
     icon: "transfers",
+    available: true,
+  },
+  {
+    label: "Cierre de turno",
+    href: "/dashboard/closing",
+    icon: "closing",
     available: true,
   },
 ];

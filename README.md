@@ -55,6 +55,8 @@ La Fase 9 incorpora entradas, mermas y ajustes gerenciales como movimientos tran
 
 La Fase 10 incorpora envío y recepción transaccional de transferencias entre sedes, incluyendo cantidades reales y diferencias auditables.
 
+La Fase 11 incorpora el cierre transaccional del turno con conteo físico final y pagos separados en efectivo y Yape.
+
 Las credenciales locales deben permanecer únicamente en `.env.local`.
 
 ## Verificación
