@@ -803,6 +803,71 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      receive_transfer: {
+        Args: {
+          selected_destination_work_shift_id: string
+          selected_items: Json
+          selected_reception_notes: string
+          selected_transfer_id: string
+        }
+        Returns: {
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          cancelled_by: string | null
+          created_at: string
+          created_by: string
+          destination_location_id: string
+          destination_work_shift_id: string | null
+          id: string
+          origin_location_id: string
+          origin_work_shift_id: string
+          received_at: string | null
+          received_by: string | null
+          reception_notes: string | null
+          sent_at: string | null
+          sent_by: string | null
+          status: Database["public"]["Enums"]["transfer_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "transfers"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      send_transfer: {
+        Args: {
+          selected_destination_location_id: string
+          selected_items: Json
+          selected_origin_work_shift_id: string
+        }
+        Returns: {
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          cancelled_by: string | null
+          created_at: string
+          created_by: string
+          destination_location_id: string
+          destination_work_shift_id: string | null
+          id: string
+          origin_location_id: string
+          origin_work_shift_id: string
+          received_at: string | null
+          received_by: string | null
+          reception_notes: string | null
+          sent_at: string | null
+          sent_by: string | null
+          status: Database["public"]["Enums"]["transfer_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "transfers"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       app_role: "EMPLOYEE" | "MANAGER" | "ADMIN"

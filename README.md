@@ -53,6 +53,8 @@ La Fase 8 incorpora la apertura transaccional de turnos con efectivo físico y u
 
 La Fase 9 incorpora entradas, mermas y ajustes gerenciales como movimientos transaccionales e inmutables dentro de turnos abiertos.
 
+La Fase 10 incorpora envío y recepción transaccional de transferencias entre sedes, incluyendo cantidades reales y diferencias auditables.
+
 Las credenciales locales deben permanecer únicamente en `.env.local`.
 
 ## Verificación

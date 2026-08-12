@@ -7,6 +7,7 @@ import {
   PackagePlus,
   PackageSearch,
   Settings,
+  Truck,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -24,6 +25,7 @@ const icons = {
   attendance: CalendarCheck2,
   shift: Clock3,
   inventory: PackagePlus,
+  transfers: Truck,
   reports: BarChart3,
   settings: Settings,
 };
