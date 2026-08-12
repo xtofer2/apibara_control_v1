@@ -51,6 +51,8 @@ La Fase 7 incorpora entrada y salida de asistencia con timestamps de servidor, u
 
 La Fase 8 incorpora la apertura transaccional de turnos con efectivo físico y un conteo inicial obligatorio para cada producto activo.
 
+La Fase 9 incorpora entradas, mermas y ajustes gerenciales como movimientos transaccionales e inmutables dentro de turnos abiertos.
+
 Las credenciales locales deben permanecer únicamente en `.env.local`.
 
 ## Verificación

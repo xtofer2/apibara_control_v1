@@ -10,6 +10,7 @@ export type NavigationItem = {
     | "catalogs"
     | "attendance"
     | "shift"
+    | "inventory"
     | "reports"
     | "settings";
   available: boolean;
@@ -33,6 +34,12 @@ const employeeItems: NavigationItem[] = [
     label: "Turno operativo",
     href: "/dashboard/shift",
     icon: "shift",
+    available: true,
+  },
+  {
+    label: "Inventario",
+    href: "/dashboard/inventory",
+    icon: "inventory",
     available: true,
   },
 ];

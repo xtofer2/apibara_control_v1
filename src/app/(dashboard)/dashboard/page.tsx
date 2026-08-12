@@ -57,11 +57,11 @@ export default async function DashboardPage() {
           <div>
             <p className="text-sm font-semibold text-orange-300">Próxima fase</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-              Movimientos de inventario y mermas
+              Transferencias entre sedes
             </h2>
             <p className="mt-3 max-w-2xl leading-7 text-stone-400">
-              Los empleados podrán registrar entradas y mermas durante un turno
-              abierto; los ajustes quedarán restringidos a gerencia.
+              Los empleados podrán enviar productos entre sedes y confirmar en
+              destino las cantidades realmente recibidas.
             </p>
           </div>
           <ArrowRight aria-hidden="true" className="size-6 text-orange-300" />

@@ -96,6 +96,13 @@ values (
   now()
 );
 
+insert into public.openings (work_shift_id, created_by, cash_opening)
+values (
+  '50000000-0000-4000-8000-000000000001',
+  '40000000-0000-4000-8000-000000000001',
+  0
+);
+
 insert into public.audit_logs (
   id,
   user_id,
@@ -192,15 +199,12 @@ select throws_ok(
 
 select lives_ok(
   $$
-    insert into public.inventory_movements (
-      work_shift_id,
-      movement_type,
-      created_by
-    )
-    values (
+    select public.create_inventory_movement(
       '50000000-0000-4000-8000-000000000001',
       'ENTRY',
-      '40000000-0000-4000-8000-000000000001'
+      null,
+      null,
+      '[{"product_id":"20000000-0000-4000-8000-000000000001","quantity":2}]'::jsonb
     )
   $$,
   'an employee can create an inventory entry'
@@ -208,23 +212,16 @@ select lives_ok(
 
 select throws_ok(
   $$
-    insert into public.inventory_movements (
-      work_shift_id,
-      movement_type,
-      reason,
-      notes,
-      created_by
-    )
-    values (
+    select public.create_inventory_movement(
       '50000000-0000-4000-8000-000000000001',
       'ADJUSTMENT_POSITIVE',
       'COUNT_CORRECTION',
       'Intento no autorizado',
-      '40000000-0000-4000-8000-000000000001'
+      '[{"product_id":"20000000-0000-4000-8000-000000000001","quantity":1}]'::jsonb
     )
   $$,
   '42501',
-  'new row violates row-level security policy for table "inventory_movements"',
+  'INVENTORY_ADJUSTMENT_FORBIDDEN',
   'an employee cannot create inventory adjustments'
 );
 
@@ -265,19 +262,12 @@ select results_eq(
 
 select lives_ok(
   $$
-    insert into public.inventory_movements (
-      work_shift_id,
-      movement_type,
-      reason,
-      notes,
-      created_by
-    )
-    values (
+    select public.create_inventory_movement(
       '50000000-0000-4000-8000-000000000001',
       'ADJUSTMENT_NEGATIVE',
       'COUNT_CORRECTION',
       'Ajuste autorizado',
-      '40000000-0000-4000-8000-000000000002'
+      '[{"product_id":"20000000-0000-4000-8000-000000000001","quantity":1}]'::jsonb
     )
   $$,
   'a manager can create inventory adjustments'

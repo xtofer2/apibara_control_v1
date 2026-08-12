@@ -4,6 +4,7 @@ import {
   Clock3,
   Home,
   LogOut,
+  PackagePlus,
   PackageSearch,
   Settings,
 } from "lucide-react";
@@ -22,6 +23,7 @@ const icons = {
   catalogs: PackageSearch,
   attendance: CalendarCheck2,
   shift: Clock3,
+  inventory: PackagePlus,
   reports: BarChart3,
   settings: Settings,
 };

@@ -756,6 +756,30 @@ export type Database = {
           work_date: string
         }[]
       }
+      create_inventory_movement: {
+        Args: {
+          selected_items: Json
+          selected_movement_type: Database["public"]["Enums"]["inventory_movement_type"]
+          selected_notes: string
+          selected_reason: string
+          selected_work_shift_id: string
+        }
+        Returns: {
+          created_at: string
+          created_by: string
+          id: string
+          movement_type: Database["public"]["Enums"]["inventory_movement_type"]
+          notes: string | null
+          reason: string | null
+          work_shift_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "inventory_movements"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       open_operational_shift: {
         Args: {
           selected_cash_opening: number
