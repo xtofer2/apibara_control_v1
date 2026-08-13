@@ -24,16 +24,16 @@ Este documento es la puerta de salida a producción. Ningún cambio manual en la
 
 ## 2. Proyecto Supabase de producción
 
-- [ ] Crear un proyecto independiente de desarrollo y elegir una región cercana a Lima.
+- [x] Crear un proyecto independiente de desarrollo y elegir una región cercana a Lima.
 - [ ] Guardar el `project ref` en el gestor de secretos del equipo, no en Git.
 - [ ] Verificar en **Database > Backups** que el plan tenga respaldos activos y retención suficiente.
 - [ ] Habilitar Point-in-Time Recovery si el RPO no permite perder hasta un día de operaciones.
 - [ ] Programar una restauración de prueba y documentar duración, responsable y resultado.
-- [ ] En **Authentication > URL Configuration**, establecer la URL HTTPS final como `Site URL` y registrar únicamente los redirects necesarios. En producción se prefieren URLs exactas.
-- [ ] Deshabilitar el registro público después de crear/invitar a los usuarios autorizados; Apibara Control es un sistema interno.
+- [x] En **Authentication > URL Configuration**, establecer la URL HTTPS final como `Site URL` y registrar únicamente los redirects necesarios. En producción se prefieren URLs exactas.
+- [x] Deshabilitar el registro público después de crear/invitar a los usuarios autorizados; Apibara Control es un sistema interno.
 - [ ] Definir una política de contraseñas acorde con la organización y revisar expiración de sesiones.
 - [ ] Configurar SMTP propio si se usarán invitaciones, recuperación de contraseña o confirmaciones por correo.
-- [ ] Crear un primer administrador de forma controlada y comprobar que su perfil quede activo con rol `ADMIN`.
+- [x] Crear un primer administrador de forma controlada y comprobar que su perfil quede activo con rol `ADMIN`.
 
 Referencias oficiales: [migraciones de Supabase](https://supabase.com/docs/guides/deployment/database-migrations), [checklist de producción](https://supabase.com/docs/guides/deployment/going-into-prod), [redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls) y [respaldos](https://supabase.com/docs/guides/platform/backups).
 
@@ -49,30 +49,30 @@ npx supabase db push --dry-run
 npx supabase db push
 ```
 
-- [ ] Confirmar que `migration list` no muestre divergencias inesperadas.
-- [ ] Revisar el plan de `db push --dry-run` antes de aplicar.
-- [ ] Aplicar una sola vez y guardar el log del despliegue.
-- [ ] No ejecutar `db reset`, seeds E2E ni pruebas destructivas contra producción.
-- [ ] Verificar que las ubicaciones, productos y métodos de pago iniciales estén presentes.
+- [x] Confirmar que `migration list` no muestre divergencias inesperadas.
+- [x] Revisar el plan de `db push --dry-run` antes de aplicar.
+- [x] Aplicar una sola vez y guardar el log del despliegue.
+- [x] No ejecutar `db reset`, seeds E2E ni pruebas destructivas contra producción.
+- [x] Verificar que las ubicaciones, productos y métodos de pago iniciales estén presentes.
 - [ ] Ejecutar el Security Advisor de Supabase y resolver hallazgos antes del lanzamiento.
 - [ ] Mantener las correcciones de datos como operaciones auditables; no borrar transacciones confirmadas.
 
 ## 4. Proyecto Vercel
 
-- [ ] Importar `xtofer2/apibara_control_v1` y usar `main` como rama de producción.
-- [ ] Confirmar Node.js 22 o superior y los comandos detectados: instalación `npm ci`, build `npm run build`.
-- [ ] Configurar en **Production** y, si corresponde, **Preview**:
+- [x] Importar `xtofer2/apibara_control_v1` y usar `main` como rama de producción.
+- [x] Confirmar Node.js 22 o superior y los comandos detectados: instalación `npm ci`, build `npm run build`.
+- [x] Configurar en **Production** y, si corresponde, **Preview**:
 
 | Variable | Valor | Secreta |
 | --- | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | URL del proyecto Supabase del entorno | No, pero debe administrarse en Vercel |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Publishable key del mismo proyecto | No |
 
-- [ ] No crear `SUPABASE_SERVICE_ROLE_KEY` para esta aplicación.
-- [ ] Asignar el dominio final, HTTPS y DNS.
+- [x] No crear `SUPABASE_SERVICE_ROLE_KEY` para esta aplicación.
+- [x] Asignar el dominio final, HTTPS y DNS.
 - [ ] Desplegar primero una Preview conectada al entorno de prueba, nunca a datos de producción para E2E destructivo.
-- [ ] Promover el commit aprobado a Production.
-- [ ] Confirmar que `GET https://<dominio>/api/health` responda `200`.
+- [x] Promover el commit aprobado a Production.
+- [x] Confirmar que `GET https://<dominio>/api/health` responda `200`.
 
 Referencia oficial: [entornos y variables de Vercel](https://vercel.com/docs/environment-variables).
 
