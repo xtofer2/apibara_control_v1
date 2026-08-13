@@ -1,4 +1,4 @@
-import { ArrowRight, BadgeCheck, MapPin, ShieldCheck } from "lucide-react";
+import { BadgeCheck, CircleCheckBig, MapPin, ShieldCheck } from "lucide-react";
 import type { Metadata } from "next";
 
 import { roleLabels } from "@/features/auth/config/navigation";
@@ -19,8 +19,8 @@ export default async function DashboardPage() {
           Hola, {profile.full_name.split(" ")[0]}
         </h1>
         <p className="mt-3 max-w-2xl leading-7 text-stone-600">
-          Tu acceso está activo. Los módulos operativos se habilitarán de forma
-          incremental en las siguientes fases.
+          Tu acceso está activo. Utiliza los módulos disponibles según tu rol
+          para registrar y supervisar la operación diaria.
         </p>
       </section>
 
@@ -55,16 +55,16 @@ export default async function DashboardPage() {
       <section className="rounded-3xl bg-stone-950 p-6 text-white sm:p-8">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm font-semibold text-orange-300">Próxima fase</p>
+            <p className="text-sm font-semibold text-orange-300">Versión 1</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-              Preparación para producción
+              Preparada para el despliegue
             </h2>
             <p className="mt-3 max-w-2xl leading-7 text-stone-400">
-              La siguiente etapa revisará configuración, seguridad, respaldos,
-              experiencia móvil y despliegue en Vercel y Supabase Cloud.
+              La base técnica está validada. El lanzamiento requiere completar
+              el checklist operativo de Supabase Cloud y Vercel.
             </p>
           </div>
-          <ArrowRight aria-hidden="true" className="size-6 text-orange-300" />
+          <CircleCheckBig aria-hidden="true" className="size-6 text-orange-300" />
         </div>
       </section>
     </div>

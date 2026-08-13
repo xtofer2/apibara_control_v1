@@ -63,6 +63,8 @@ La Fase 13 incorpora auditoría inmutable para operaciones críticas y cambios a
 
 La Fase 14 incorpora pruebas unitarias de reglas de negocio con Vitest y recorridos críticos E2E con Playwright, ejecutables localmente y en GitHub Actions.
 
+La Fase 15 prepara la operación en producción con validación estricta de configuración, encabezados de seguridad, registro estructurado de errores de servidor, estados de recuperación, navegación móvil y controles automatizados de RLS. El proceso de salida está detallado en [`docs/PRODUCTION_CHECKLIST.md`](docs/PRODUCTION_CHECKLIST.md).
+
 Las credenciales locales deben permanecer únicamente en `.env.local`.
 
 ## Verificación
@@ -76,7 +78,9 @@ npm run test:unit
 npm run test:e2e
 ```
 
-Las pruebas E2E requieren Docker. El comando inicia Supabase local si es necesario, reinicia la base antes de cada escenario y conserva trazas únicamente cuando una prueba falla.
+Las pruebas E2E requieren Docker. El comando inicia Supabase local si es necesario, limpia los datos de prueba antes de cada escenario y conserva trazas únicamente cuando una prueba falla.
+
+Con la aplicación ejecutándose, `GET /api/health` comprueba que la configuración pública obligatoria está disponible sin revelar sus valores.
 
 ## Arquitectura
 

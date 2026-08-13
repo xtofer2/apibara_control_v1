@@ -40,13 +40,24 @@ type AppShellProps = {
   profile: CurrentProfile;
 };
 
-function Navigation({ items }: { items: NavigationItem[] }) {
+function Navigation({
+  items,
+  mobile = false,
+}: {
+  items: NavigationItem[];
+  mobile?: boolean;
+}) {
   return (
-    <nav aria-label="Navegación principal" className="space-y-1">
+    <nav
+      aria-label="Navegación principal"
+      className={mobile ? "flex min-w-max gap-2" : "space-y-1"}
+    >
       {items.map((item) => {
         const Icon = icons[item.icon];
-        const className =
-          "flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition";
+        const className = [
+          "flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition",
+          mobile ? "shrink-0" : "",
+        ].join(" ");
 
         if (!item.available) {
           return (
@@ -66,7 +77,11 @@ function Navigation({ items }: { items: NavigationItem[] }) {
 
         return (
           <Link
-            className={`${className} bg-orange-500/10 text-orange-300 hover:bg-orange-500/15`}
+            className={`${className} ${
+              mobile
+                ? "bg-orange-50 text-orange-800 hover:bg-orange-100"
+                : "bg-orange-500/10 text-orange-300 hover:bg-orange-500/15"
+            }`}
             href={item.href}
             key={item.href}
           >
@@ -156,7 +171,7 @@ export function AppShell({ children, navigation, profile }: AppShellProps) {
 
         <div className="border-b border-stone-200 bg-white px-5 py-3 lg:hidden">
           <div className="mx-auto max-w-6xl overflow-x-auto">
-            <Navigation items={navigation} />
+            <Navigation items={navigation} mobile />
           </div>
         </div>
 
