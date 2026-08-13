@@ -57,11 +57,11 @@ export default async function DashboardPage() {
           <div>
             <p className="text-sm font-semibold text-orange-300">Próxima fase</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-              Pruebas críticas automatizadas
+              Preparación para producción
             </h2>
             <p className="mt-3 max-w-2xl leading-7 text-stone-400">
-              La siguiente etapa cubrirá reglas de negocio y recorridos E2E
-              para asegurar los flujos principales antes del despliegue.
+              La siguiente etapa revisará configuración, seguridad, respaldos,
+              experiencia móvil y despliegue en Vercel y Supabase Cloud.
             </p>
           </div>
           <ArrowRight aria-hidden="true" className="size-6 text-orange-300" />

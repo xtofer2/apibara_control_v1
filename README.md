@@ -61,6 +61,8 @@ La Fase 12 incorpora ventas calculadas por producto y un tablero gerencial de co
 
 La Fase 13 incorpora auditoría inmutable para operaciones críticas y cambios administrativos, con consulta gerencial filtrable por fecha, acción y responsable.
 
+La Fase 14 incorpora pruebas unitarias de reglas de negocio con Vitest y recorridos críticos E2E con Playwright, ejecutables localmente y en GitHub Actions.
+
 Las credenciales locales deben permanecer únicamente en `.env.local`.
 
 ## Verificación
@@ -70,7 +72,11 @@ npm run lint
 npm run typecheck
 npm run build
 npm run db:test
+npm run test:unit
+npm run test:e2e
 ```
+
+Las pruebas E2E requieren Docker. El comando inicia Supabase local si es necesario, reinicia la base antes de cada escenario y conserva trazas únicamente cuando una prueba falla.
 
 ## Arquitectura
 

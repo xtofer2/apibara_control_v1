@@ -10,12 +10,17 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "db:reset": "supabase db reset --local",
     "db:types": "supabase gen types typescript --local > src/types/database.generated.ts",
-    "db:test": "supabase test db"
+    "db:test": "supabase test db",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:critical": "npm run test:unit && npm run test:e2e"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -35,6 +40,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -43,6 +49,7 @@
     "eslint-config-next": "16.3.0",
     "supabase": "^2.113.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.10"
   }
 }

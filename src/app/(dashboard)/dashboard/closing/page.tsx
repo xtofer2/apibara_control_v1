@@ -2,6 +2,7 @@ import { Calculator, CheckCircle2, Clock3, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 
 import { requirePermission } from "@/features/auth/server/require-permission";
+import { calculateClosingTotal } from "@/features/closing/lib/calculate-closing-total";
 import { CloseShiftForm } from "@/features/closing/components/close-shift-form";
 import { getClosingDashboard } from "@/features/closing/server/closing-service";
 
@@ -29,7 +30,7 @@ export default async function ClosingPage() {
         {dashboard.closings.length === 0 ? <div className="rounded-2xl border border-dashed border-stone-300 bg-white p-7 text-center text-sm text-stone-500">Todavía no hay cierres visibles.</div> : (
           <div className="grid gap-4">
             {dashboard.closings.map((closing) => {
-              const total = closing.payments.reduce((sum, payment) => sum + payment.amount, 0);
+              const total = calculateClosingTotal(closing.payments);
               return (
                 <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm" key={closing.id}>
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
