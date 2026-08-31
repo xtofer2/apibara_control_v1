@@ -2,7 +2,10 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { AttendanceReportFilters } from "@/features/attendance/schemas/attendance";
+import type {
+  AttendancePeriodFilters,
+  AttendanceReportFilters,
+} from "@/features/attendance/schemas/attendance";
 import type { Database } from "@/types/database.generated";
 
 type AttendanceClient = SupabaseClient<Database>;
@@ -82,5 +85,16 @@ export async function findManagerAttendanceReport(
     selected_date: filters.date,
     selected_location_id: filters.location_id,
     selected_user_id: filters.user_id,
+  });
+}
+
+export async function findManagerAttendancePeriodReport(
+  supabase: AttendanceClient,
+  filters: AttendancePeriodFilters & { period_user_id: string },
+) {
+  return supabase.rpc("attendance_period_report", {
+    selected_user_id: filters.period_user_id,
+    selected_start_date: filters.period_from,
+    selected_end_date: filters.period_to,
   });
 }

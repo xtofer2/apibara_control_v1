@@ -756,6 +756,22 @@ export type Database = {
           work_date: string
         }[]
       }
+      attendance_period_report: {
+        Args: {
+          selected_end_date: string
+          selected_start_date: string
+          selected_user_id: string
+        }
+        Returns: {
+          attendance_id: string
+          check_in_at: string
+          check_out_at: string
+          location_code: string
+          location_id: string
+          location_name: string
+          work_date: string
+        }[]
+      }
       close_operational_shift: {
         Args: {
           selected_items: Json

@@ -4,16 +4,22 @@ import type { Metadata } from "next";
 import { hasPermission } from "@/features/auth/config/permissions";
 import { requirePermission } from "@/features/auth/server/require-permission";
 import { AttendanceControl } from "@/features/attendance/components/attendance-control";
+import { AttendancePeriodReport } from "@/features/attendance/components/attendance-period-report";
 import {
+  addDaysToDate,
   formatAttendanceDuration,
   formatLimaDate,
   formatLimaTime,
   getLimaDate,
 } from "@/features/attendance/lib/date-time";
-import { attendanceReportFilterSchema } from "@/features/attendance/schemas/attendance";
+import {
+  attendancePeriodFilterSchema,
+  attendanceReportFilterSchema,
+} from "@/features/attendance/schemas/attendance";
 import {
   getEmployeeAttendanceDashboard,
   getManagerAttendanceDashboard,
+  getManagerAttendancePeriodReport,
 } from "@/features/attendance/server/attendance-service";
 
 export const metadata: Metadata = {
@@ -24,6 +30,9 @@ type AttendancePageProps = {
   searchParams: Promise<{
     date?: string | string[];
     location_id?: string | string[];
+    period_from?: string | string[];
+    period_to?: string | string[];
+    period_user_id?: string | string[];
     user_id?: string | string[];
   }>;
 };
@@ -39,17 +48,42 @@ export default async function AttendancePage({
   const employeeDashboard = await getEmployeeAttendanceDashboard(profile.id);
   const canReadAll = hasPermission(profile.role, "attendance.read_all");
   const rawSearchParams = await searchParams;
+  const today = getLimaDate();
   const parsedFilters = attendanceReportFilterSchema.safeParse({
-    date: singleValue(rawSearchParams.date) ?? getLimaDate(),
+    date: singleValue(rawSearchParams.date) ?? today,
     location_id: singleValue(rawSearchParams.location_id),
     user_id: singleValue(rawSearchParams.user_id),
   });
   const filters = parsedFilters.success
     ? parsedFilters.data
-    : { date: getLimaDate(), location_id: undefined, user_id: undefined };
+    : { date: today, location_id: undefined, user_id: undefined };
+  const defaultPeriodFilters = {
+    period_from: addDaysToDate(today, -30),
+    period_to: today,
+    period_user_id: undefined,
+  };
+  const parsedPeriodFilters = attendancePeriodFilterSchema.safeParse({
+    period_from:
+      singleValue(rawSearchParams.period_from) ?? defaultPeriodFilters.period_from,
+    period_to:
+      singleValue(rawSearchParams.period_to) ?? defaultPeriodFilters.period_to,
+    period_user_id: singleValue(rawSearchParams.period_user_id),
+  });
+  const periodFilters = parsedPeriodFilters.success
+    ? parsedPeriodFilters.data
+    : defaultPeriodFilters;
   const managerDashboard = canReadAll
     ? await getManagerAttendanceDashboard(filters)
     : null;
+  const periodRows =
+    canReadAll &&
+    parsedPeriodFilters.success &&
+    parsedPeriodFilters.data.period_user_id
+      ? await getManagerAttendancePeriodReport({
+          ...parsedPeriodFilters.data,
+          period_user_id: parsedPeriodFilters.data.period_user_id,
+        })
+      : null;
 
   return (
     <div className="space-y-8">
@@ -126,7 +160,8 @@ export default async function AttendancePage({
       </section>
 
       {managerDashboard ? (
-        <section className="space-y-5 rounded-3xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7">
+        <>
+          <section className="space-y-5 rounded-3xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7">
           <div className="flex items-start gap-3">
             <div className="flex size-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
               <Users aria-hidden="true" className="size-5" />
@@ -142,6 +177,11 @@ export default async function AttendancePage({
           </div>
 
           <form className="grid gap-4 rounded-2xl bg-stone-50 p-4 md:grid-cols-4" method="get">
+            {periodFilters.period_user_id ? (
+              <input name="period_user_id" type="hidden" value={periodFilters.period_user_id} />
+            ) : null}
+            <input name="period_from" type="hidden" value={periodFilters.period_from} />
+            <input name="period_to" type="hidden" value={periodFilters.period_to} />
             <label className="space-y-1.5 text-sm font-medium text-stone-700">
               Fecha
               <input
@@ -248,7 +288,16 @@ export default async function AttendancePage({
               </table>
             </div>
           </div>
-        </section>
+          </section>
+
+          <AttendancePeriodReport
+            dailyFilters={filters}
+            employees={managerDashboard.employees}
+            filters={periodFilters}
+            filtersValid={parsedPeriodFilters.success}
+            rows={periodRows}
+          />
+        </>
       ) : null}
     </div>
   );

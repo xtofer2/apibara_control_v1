@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(10);
+select plan(14);
 
 insert into auth.users (
   id,
@@ -126,6 +126,27 @@ select throws_ok(
   'an employee cannot check out twice'
 );
 
+select throws_ok(
+  $$select public.attendance_check_in('10000000-0000-4000-8000-000000000002')$$,
+  'P0001',
+  'ATTENDANCE_ALREADY_RECORDED',
+  'an employee cannot register a second location on the same day'
+);
+
+select throws_ok(
+  $$
+    select *
+    from public.attendance_period_report(
+      '41000000-0000-4000-8000-000000000001',
+      ((now() at time zone 'America/Lima')::date - 2),
+      (now() at time zone 'America/Lima')::date
+    )
+  $$,
+  '42501',
+  'ATTENDANCE_REPORT_FORBIDDEN',
+  'an employee cannot call the period report directly'
+);
+
 reset role;
 set local role authenticated;
 select set_config(
@@ -146,6 +167,33 @@ select results_eq(
   $$,
   'values (1::bigint)',
   'a manager can read the daily attendance report'
+);
+
+select results_eq(
+  $$
+    select count(*)::bigint
+    from public.attendance_period_report(
+      '41000000-0000-4000-8000-000000000001',
+      ((now() at time zone 'America/Lima')::date - 2),
+      (now() at time zone 'America/Lima')::date
+    )
+  $$,
+  'values (3::bigint)',
+  'the period report returns every calendar day inclusively'
+);
+
+select results_eq(
+  $$
+    select count(*)::bigint
+    from public.attendance_period_report(
+      '41000000-0000-4000-8000-000000000001',
+      ((now() at time zone 'America/Lima')::date - 2),
+      (now() at time zone 'America/Lima')::date
+    )
+    where attendance_id is not null
+  $$,
+  'values (1::bigint)',
+  'the period report identifies the employee attendance day'
 );
 
 select * from finish();

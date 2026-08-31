@@ -23,6 +23,13 @@ export function getLimaDate(date = new Date()) {
   return limaDateFormatter.format(date);
 }
 
+export function addDaysToDate(value: string, days: number) {
+  const [year, month, day] = value.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day + days));
+
+  return date.toISOString().slice(0, 10);
+}
+
 export function formatLimaDate(value: string) {
   return limaDateLabelFormatter.format(new Date(`${value}T12:00:00-05:00`));
 }

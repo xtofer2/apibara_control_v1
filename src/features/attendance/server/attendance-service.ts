@@ -2,8 +2,12 @@ import "server-only";
 
 import type { PostgrestError } from "@supabase/supabase-js";
 
-import type { AttendanceReportFilters } from "@/features/attendance/schemas/attendance";
 import type {
+  AttendancePeriodFilters,
+  AttendanceReportFilters,
+} from "@/features/attendance/schemas/attendance";
+import type {
+  AttendancePeriodRow,
   AttendanceReportRow,
   AttendanceWithLocation,
 } from "@/features/attendance/types";
@@ -14,6 +18,7 @@ import {
   executeCheckOut,
   findActiveAttendanceLocations,
   findAttendanceEmployees,
+  findManagerAttendancePeriodReport,
   findManagerAttendanceReport,
   findOpenAttendance,
   findRecentAttendance,
@@ -26,6 +31,8 @@ export class AttendanceServiceError extends Error {
       | "ALREADY_RECORDED"
       | "NOT_OPEN"
       | "LOCATION_UNAVAILABLE"
+      | "PERIOD_INVALID"
+      | "EMPLOYEE_INVALID"
       | "FORBIDDEN"
       | "UNKNOWN",
     message: string,
@@ -46,7 +53,9 @@ function toAttendanceServiceError(error: PostgrestError) {
     },
     ATTENDANCE_ALREADY_RECORDED: {
       code: "ALREADY_RECORDED",
-      message: "Ya registraste asistencia en esa sede durante el día.",
+      message: error.details
+        ? `Ya registraste asistencia hoy en ${error.details}.`
+        : "Ya registraste asistencia hoy.",
     },
     ATTENDANCE_NOT_OPEN: {
       code: "NOT_OPEN",
@@ -63,6 +72,14 @@ function toAttendanceServiceError(error: PostgrestError) {
     ATTENDANCE_REPORT_FORBIDDEN: {
       code: "FORBIDDEN",
       message: "Tu rol no puede consultar este reporte.",
+    },
+    ATTENDANCE_PERIOD_INVALID: {
+      code: "PERIOD_INVALID",
+      message: "El intervalo de asistencia no es válido.",
+    },
+    ATTENDANCE_EMPLOYEE_INVALID: {
+      code: "EMPLOYEE_INVALID",
+      message: "El empleado seleccionado no existe.",
     },
   };
   const knownError = messages[error.message];
@@ -136,4 +153,20 @@ export async function getManagerAttendanceDashboard(
     locations: locationsResult.data ?? [],
     employees: employeesResult.data ?? [],
   };
+}
+
+export async function getManagerAttendancePeriodReport(
+  filters: AttendancePeriodFilters & { period_user_id: string },
+) {
+  const supabase = await createClient();
+  const { data, error } = await findManagerAttendancePeriodReport(
+    supabase,
+    filters,
+  );
+
+  if (error) {
+    throw toAttendanceServiceError(error);
+  }
+
+  return (data ?? []) as AttendancePeriodRow[];
 }
