@@ -1,3 +1,5 @@
+import type { Database } from "@/types/database.generated";
+
 export type ReconciliationRow = {
   work_shift_id: string;
   operational_date: string;
@@ -25,3 +27,12 @@ export type ReconciliationRow = {
   yape_amount: number;
   closing_total: number;
 };
+
+export type MonthlyDailyIncomeRow =
+  Database["public"]["Functions"]["management_monthly_daily_income"]["Returns"][number];
+
+export type MonthlyLocationIncomeRow =
+  Database["public"]["Functions"]["management_monthly_location_income"]["Returns"][number];
+
+export type MonthlyProductSalesRow =
+  Database["public"]["Functions"]["management_monthly_product_sales"]["Returns"][number];

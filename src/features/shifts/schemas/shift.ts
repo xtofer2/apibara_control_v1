@@ -8,6 +8,14 @@ const decimalQuantity = z
 
 export const openShiftSchema = z.object({
   location_id: z.uuid("Selecciona una sede válida."),
+  operational_date: z
+    .preprocess(
+      (value) => (value === "" || value == null ? undefined : value),
+      z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/, "Selecciona una fecha válida.")
+        .optional(),
+    ),
   cash_opening: z
     .string()
     .trim()

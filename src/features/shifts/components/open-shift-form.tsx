@@ -1,6 +1,6 @@
 "use client";
 
-import { Banknote, Boxes, LoaderCircle, MapPin, Play } from "lucide-react";
+import { Banknote, Boxes, CalendarDays, LoaderCircle, MapPin, Play } from "lucide-react";
 import { useActionState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -10,10 +10,17 @@ import type { ShiftLocation, ShiftProduct } from "@/features/shifts/types";
 
 type OpenShiftFormProps = {
   availableLocations: ShiftLocation[];
+  canChooseOperationalDate: boolean;
+  defaultOperationalDate: string;
   products: ShiftProduct[];
 };
 
-export function OpenShiftForm({ availableLocations, products }: OpenShiftFormProps) {
+export function OpenShiftForm({
+  availableLocations,
+  canChooseOperationalDate,
+  defaultOperationalDate,
+  products,
+}: OpenShiftFormProps) {
   const [state, formAction, pending] = useActionState(
     openShiftAction,
     initialShiftActionState,
@@ -39,7 +46,7 @@ export function OpenShiftForm({ availableLocations, products }: OpenShiftFormPro
         </p>
       ) : (
         <form action={formAction} className="mt-7 space-y-7">
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className={`grid gap-5 sm:grid-cols-2 ${canChooseOperationalDate ? "lg:grid-cols-3" : ""}`}>
             <label className="space-y-2 text-sm font-medium text-stone-700">
               <span className="flex items-center gap-2">
                 <MapPin aria-hidden="true" className="size-4" /> Sede
@@ -58,6 +65,24 @@ export function OpenShiftForm({ availableLocations, products }: OpenShiftFormPro
                 ))}
               </select>
             </label>
+
+            {canChooseOperationalDate ? (
+              <label className="space-y-2 text-sm font-medium text-stone-700">
+                <span className="flex items-center gap-2">
+                  <CalendarDays aria-hidden="true" className="size-4" /> Fecha operativa
+                </span>
+                <input
+                  className="h-11 w-full rounded-xl border border-stone-200 bg-white px-3 text-stone-950 outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10"
+                  defaultValue={defaultOperationalDate}
+                  name="operational_date"
+                  required
+                  type="date"
+                />
+                <span className="block text-xs font-normal text-stone-500">
+                  Uso administrativo. La hora real se registra en servidor.
+                </span>
+              </label>
+            ) : null}
 
             <label className="space-y-2 text-sm font-medium text-stone-700">
               <span className="flex items-center gap-2">

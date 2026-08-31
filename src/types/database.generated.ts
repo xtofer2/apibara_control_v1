@@ -819,6 +819,39 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      management_monthly_daily_income: {
+        Args: { selected_location_id?: string; selected_month: string }
+        Returns: {
+          cash_amount: number
+          closed_shift_count: number
+          open_shift_count: number
+          operational_date: string
+          total_income: number
+          yape_amount: number
+        }[]
+      }
+      management_monthly_location_income: {
+        Args: { selected_location_id?: string; selected_month: string }
+        Returns: {
+          cash_amount: number
+          closed_shift_count: number
+          location_code: string
+          location_id: string
+          location_name: string
+          total_income: number
+          yape_amount: number
+        }[]
+      }
+      management_monthly_product_sales: {
+        Args: { selected_location_id?: string; selected_month: string }
+        Returns: {
+          calculated_sales: number
+          product_code: string
+          product_id: string
+          product_name: string
+          unit_type: Database["public"]["Enums"]["product_unit"]
+        }[]
+      }
       management_reconciliation_report: {
         Args: {
           selected_date: string
@@ -858,6 +891,30 @@ export type Database = {
           selected_cash_opening: number
           selected_items: Json
           selected_location_id: string
+        }
+        Returns: {
+          closed_at: string | null
+          created_at: string
+          id: string
+          location_id: string
+          opened_at: string
+          operational_date: string
+          status: Database["public"]["Enums"]["shift_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "work_shifts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      open_operational_shift_for_date: {
+        Args: {
+          selected_cash_opening: number
+          selected_items: Json
+          selected_location_id: string
+          selected_operational_date: string
         }
         Returns: {
           closed_at: string | null

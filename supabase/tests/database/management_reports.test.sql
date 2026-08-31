@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(13);
+select plan(19);
 
 insert into auth.users (
   id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
@@ -24,11 +24,21 @@ insert into auth.users (
     '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated',
     'reports.unrelated@test.local', '', now(), now(), now(), '{}',
     '{"full_name":"Sin Participacion"}'
+  ),
+  (
+    '46000000-0000-4000-8000-000000000004',
+    '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated',
+    'reports.admin@test.local', '', now(), now(), now(), '{}',
+    '{"full_name":"Administrador Reportes"}'
   );
 
 update public.profiles
 set role = 'MANAGER'
 where id = '46000000-0000-4000-8000-000000000001';
+
+update public.profiles
+set role = 'ADMIN'
+where id = '46000000-0000-4000-8000-000000000004';
 
 insert into public.work_shifts (
   id, location_id, operational_date, opened_at
@@ -220,6 +230,44 @@ select results_eq(
 select ok(
   to_regclass('public.sales') is null,
   'calculated sales are not persisted in a sales table'
+);
+
+select throws_ok(
+  $$select * from public.management_monthly_daily_income('2026-08-01')$$,
+  '42501', 'REPORTS_ADMIN_ONLY',
+  'managers cannot execute the monthly business report'
+);
+
+select set_config('request.jwt.claims', '{"sub":"46000000-0000-4000-8000-000000000004","role":"authenticated"}', true);
+
+select results_eq(
+  $$select count(*)::bigint from public.management_monthly_daily_income('2026-08-01')$$,
+  'values (31::bigint)',
+  'the monthly report returns every calendar day in a completed month'
+);
+select results_eq(
+  $$select total_income from public.management_monthly_daily_income('2026-08-01') where operational_date = '2026-08-12'$$,
+  'values (350::numeric)',
+  'daily income sums closing payments once per shift'
+);
+select results_eq(
+  $$select sum(total_income)::numeric from public.management_monthly_location_income('2026-08-01')$$,
+  'values (350::numeric)',
+  'location income does not duplicate closing payments per product'
+);
+select results_eq(
+  $$select total_income from public.management_monthly_location_income(
+    '2026-08-01', '10000000-0000-4000-8000-000000000002'
+  )$$,
+  'values (350::numeric)',
+  'the monthly location filter isolates one location'
+);
+select results_eq(
+  $$select calculated_sales from public.management_monthly_product_sales(
+    '2026-08-01', '10000000-0000-4000-8000-000000000002'
+  ) where product_code = 'EMP_CLASSIC'$$,
+  'values (8::numeric)',
+  'monthly product sales reuse the documented reconciliation formula'
 );
 
 select * from finish();

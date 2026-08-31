@@ -3,13 +3,19 @@ import type { Metadata } from "next";
 
 import { requirePermission } from "@/features/auth/server/require-permission";
 import { OpenShiftForm } from "@/features/shifts/components/open-shift-form";
-import { formatCash, formatQuantity, formatShiftDateTime } from "@/features/shifts/lib/date-time";
+import {
+  formatCash,
+  formatQuantity,
+  formatShiftDate,
+  formatShiftDateTime,
+  getLimaShiftDate,
+} from "@/features/shifts/lib/date-time";
 import { getShiftDashboard } from "@/features/shifts/server/shift-service";
 
 export const metadata: Metadata = { title: "Turno operativo" };
 
 export default async function ShiftPage() {
-  await requirePermission("shifts.operate");
+  const profile = await requirePermission("shifts.operate");
   const dashboard = await getShiftDashboard();
   const openByLocation = new Map(dashboard.openShifts.map((shift) => [shift.location_id, shift]));
   const availableLocations = dashboard.locations.filter((location) => !openByLocation.has(location.id));
@@ -29,7 +35,12 @@ export default async function ShiftPage() {
         </p>
       </section>
 
-      <OpenShiftForm availableLocations={availableLocations} products={dashboard.products} />
+      <OpenShiftForm
+        availableLocations={availableLocations}
+        canChooseOperationalDate={profile.role === "ADMIN"}
+        defaultOperationalDate={getLimaShiftDate()}
+        products={dashboard.products}
+      />
 
       <section className="space-y-4">
         <div>
@@ -55,7 +66,12 @@ export default async function ShiftPage() {
                       <h3 className="mt-3 flex items-center gap-2 text-xl font-semibold text-stone-950">
                         <MapPin aria-hidden="true" className="size-5" /> {location?.name ?? "Sede registrada"}
                       </h3>
-                      <p className="mt-2 text-sm text-stone-600">{formatShiftDateTime(shift.opened_at)}</p>
+                      <p className="mt-2 text-sm text-stone-600">
+                        Fecha operativa: {formatShiftDate(shift.operational_date)}
+                      </p>
+                      <p className="mt-1 text-xs text-stone-500">
+                        Registrado en servidor: {formatShiftDateTime(shift.opened_at)}
+                      </p>
                     </div>
                     <div className="rounded-xl bg-white px-3 py-2 text-right shadow-sm">
                       <p className="flex items-center gap-1 text-xs text-stone-500"><Banknote aria-hidden="true" className="size-3" /> Efectivo inicial</p>

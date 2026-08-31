@@ -2,7 +2,10 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { ReportFilters } from "@/features/reports/schemas/report";
+import type {
+  MonthlyReportFilters,
+  ReportFilters,
+} from "@/features/reports/schemas/report";
 import type { Database } from "@/types/database.generated";
 
 type ReportClient = SupabaseClient<Database>;
@@ -31,4 +34,32 @@ export function findReconciliationReport(
     selected_location_id: filters.location_id,
     selected_user_id: filters.user_id,
   });
+}
+
+function monthlyRpcArgs(filters: MonthlyReportFilters) {
+  return {
+    selected_location_id: filters.monthly_location_id,
+    selected_month: `${filters.month}-01`,
+  };
+}
+
+export function findMonthlyDailyIncome(
+  supabase: ReportClient,
+  filters: MonthlyReportFilters,
+) {
+  return supabase.rpc("management_monthly_daily_income", monthlyRpcArgs(filters));
+}
+
+export function findMonthlyLocationIncome(
+  supabase: ReportClient,
+  filters: MonthlyReportFilters,
+) {
+  return supabase.rpc("management_monthly_location_income", monthlyRpcArgs(filters));
+}
+
+export function findMonthlyProductSales(
+  supabase: ReportClient,
+  filters: MonthlyReportFilters,
+) {
+  return supabase.rpc("management_monthly_product_sales", monthlyRpcArgs(filters));
 }

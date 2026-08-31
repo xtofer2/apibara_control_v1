@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(15);
+select plan(19);
 
 insert into auth.users (
   id,
@@ -43,11 +43,35 @@ values
     now(),
     '{}',
     '{"full_name":"Empleado Inactivo Turnos"}'
+  ),
+  (
+    '42000000-0000-4000-8000-000000000003',
+    '00000000-0000-0000-0000-000000000000',
+    'authenticated',
+    'authenticated',
+    'shift.admin@test.local',
+    '',
+    now(),
+    now(),
+    now(),
+    '{}',
+    '{"full_name":"Administrador Turnos"}'
   );
 
 update public.profiles
 set active = false
 where id = '42000000-0000-4000-8000-000000000002';
+
+update public.profiles
+set role = 'ADMIN'
+where id = '42000000-0000-4000-8000-000000000003';
+
+insert into public.locations (id, name, code)
+values (
+  '10000000-0000-4000-8000-000000000003',
+  'Sede Administrativa',
+  'ADMIN_TEST'
+);
 
 select ok(
   not has_table_privilege('authenticated', 'public.work_shifts', 'INSERT'),
@@ -207,6 +231,24 @@ select throws_ok(
   'UNIT products reject fractional quantities'
 );
 
+select throws_ok(
+  $$
+    select public.open_operational_shift_for_date(
+      '10000000-0000-4000-8000-000000000003',
+      0,
+      (
+        select jsonb_agg(jsonb_build_object('product_id', id, 'quantity', 0))
+        from public.products
+        where active
+      ),
+      ((now() at time zone 'America/Lima')::date - 10)
+    )
+  $$,
+  '42501',
+  'SHIFT_DATE_FORBIDDEN',
+  'an employee cannot select the operational date'
+);
+
 reset role;
 set local role authenticated;
 select set_config(
@@ -253,6 +295,50 @@ select lives_ok(
     )
   $$,
   'a valid opening still succeeds after rejected transactions'
+);
+
+reset role;
+set local role authenticated;
+select set_config(
+  'request.jwt.claims',
+  '{"sub":"42000000-0000-4000-8000-000000000003","role":"authenticated"}',
+  true
+);
+
+select lives_ok(
+  $$
+    select public.open_operational_shift_for_date(
+      '10000000-0000-4000-8000-000000000003',
+      25,
+      (
+        select jsonb_agg(jsonb_build_object('product_id', id, 'quantity', 0))
+        from public.products
+        where active
+      ),
+      ((now() at time zone 'America/Lima')::date - 10)
+    )
+  $$,
+  'an administrator can select a past operational date'
+);
+
+select results_eq(
+  $$
+    select operational_date
+    from public.work_shifts
+    where location_id = '10000000-0000-4000-8000-000000000003'
+  $$,
+  $$values (((now() at time zone 'America/Lima')::date - 10))$$,
+  'the selected operational date is stored'
+);
+
+select results_eq(
+  $$
+    select (opened_at at time zone 'America/Lima')::date
+    from public.work_shifts
+    where location_id = '10000000-0000-4000-8000-000000000003'
+  $$,
+  $$values ((now() at time zone 'America/Lima')::date)$$,
+  'the real opening timestamp remains server generated'
 );
 
 select * from finish();

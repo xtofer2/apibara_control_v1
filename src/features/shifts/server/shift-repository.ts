@@ -48,6 +48,15 @@ export async function executeOpenShift(
   supabase: ShiftClient,
   input: OpenShiftInput,
 ) {
+  if (input.operational_date) {
+    return supabase.rpc("open_operational_shift_for_date", {
+      selected_cash_opening: input.cash_opening,
+      selected_items: input.items as Json,
+      selected_location_id: input.location_id,
+      selected_operational_date: input.operational_date,
+    });
+  }
+
   return supabase.rpc("open_operational_shift", {
     selected_cash_opening: input.cash_opening,
     selected_items: input.items as Json,

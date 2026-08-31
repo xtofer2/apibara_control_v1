@@ -21,6 +21,8 @@ import {
 } from "@/features/auth/config/navigation";
 import type { CurrentProfile } from "@/features/auth/server/profile-repository";
 
+import { MobileNavigation } from "./mobile-navigation";
+
 const icons = {
   home: Home,
   catalogs: PackageSearch,
@@ -40,23 +42,13 @@ type AppShellProps = {
   profile: CurrentProfile;
 };
 
-function Navigation({
-  items,
-  mobile = false,
-}: {
-  items: NavigationItem[];
-  mobile?: boolean;
-}) {
+function Navigation({ items }: { items: NavigationItem[] }) {
   return (
-    <nav
-      aria-label="Navegación principal"
-      className={mobile ? "flex min-w-max gap-2" : "space-y-1"}
-    >
+    <nav aria-label="Navegación principal" className="space-y-1">
       {items.map((item) => {
         const Icon = icons[item.icon];
         const className = [
           "flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition",
-          mobile ? "shrink-0" : "",
         ].join(" ");
 
         if (!item.available) {
@@ -77,11 +69,7 @@ function Navigation({
 
         return (
           <Link
-            className={`${className} ${
-              mobile
-                ? "bg-orange-50 text-orange-800 hover:bg-orange-100"
-                : "bg-orange-500/10 text-orange-300 hover:bg-orange-500/15"
-            }`}
+            className={`${className} bg-orange-500/10 text-orange-300 hover:bg-orange-500/15`}
             href={item.href}
             key={item.href}
           >
@@ -142,17 +130,18 @@ export function AppShell({ children, navigation, profile }: AppShellProps) {
         </div>
       </aside>
 
-      <div className="min-w-0">
-        <header className="border-b border-stone-200 bg-white px-5 py-4 sm:px-8 lg:px-10">
+      <div className="flex min-h-screen min-w-0 flex-col">
+        <MobileNavigation
+          initials={initials}
+          items={navigation}
+          profileName={profile.full_name}
+          roleLabel={roleLabels[profile.role]}
+        />
+
+        <header className="hidden border-b border-stone-200 bg-white px-10 py-4 lg:block">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
-            <Link className="flex items-center gap-3 lg:hidden" href="/dashboard">
-              <span className="flex size-9 items-center justify-center rounded-xl bg-orange-600 font-bold text-white">
-                A
-              </span>
-              <span className="font-semibold text-stone-950">Apibara Control</span>
-            </Link>
             <div className="ml-auto flex items-center gap-3">
-              <div className="hidden text-right sm:block">
+              <div className="text-right">
                 <p className="text-sm font-medium text-stone-900">
                   {profile.full_name}
                 </p>
@@ -160,24 +149,29 @@ export function AppShell({ children, navigation, profile }: AppShellProps) {
                   {roleLabels[profile.role]}
                 </p>
               </div>
-              <form action={logoutAction} className="lg:hidden">
-                <Button aria-label="Cerrar sesión" size="icon" type="submit" variant="outline">
-                  <LogOut aria-hidden="true" />
-                </Button>
-              </form>
             </div>
           </div>
         </header>
 
-        <div className="border-b border-stone-200 bg-white px-5 py-3 lg:hidden">
-          <div className="mx-auto max-w-6xl overflow-x-auto">
-            <Navigation items={navigation} mobile />
-          </div>
-        </div>
-
-        <main className="mx-auto w-full max-w-6xl p-5 sm:p-8 lg:p-10">
+        <main className="mx-auto w-full max-w-6xl flex-1 p-5 sm:p-8 lg:p-10">
           {children}
         </main>
+
+        <footer className="border-t border-stone-200 bg-white px-5 py-4 lg:hidden">
+          <div className="mx-auto flex max-w-6xl items-center gap-3">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-xs font-semibold text-orange-700">
+              {initials}
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-stone-900">
+                {profile.full_name}
+              </p>
+              <p className="text-xs text-stone-500">
+                Sesión activa · {roleLabels[profile.role]}
+              </p>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ export async function openShiftAction(
   formData: FormData,
 ): Promise<ShiftActionState> {
   void _previousState;
-  await requirePermission("shifts.operate");
+  const profile = await requirePermission("shifts.operate");
 
   const items = Array.from(formData.entries())
     .filter(([name]) => name.startsWith("quantity."))
@@ -25,6 +25,7 @@ export async function openShiftAction(
     }));
   const parsed = openShiftSchema.safeParse({
     location_id: formData.get("location_id"),
+    operational_date: formData.get("operational_date"),
     cash_opening: formData.get("cash_opening"),
     items,
   });
@@ -34,6 +35,13 @@ export async function openShiftAction(
       status: "error",
       message: "Revisa los datos de la apertura antes de confirmar.",
       fieldErrors: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  if (parsed.data.operational_date && profile.role !== "ADMIN") {
+    return {
+      status: "error",
+      message: "Solo un administrador puede seleccionar la fecha operativa.",
     };
   }
 

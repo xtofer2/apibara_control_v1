@@ -15,8 +15,16 @@ import {
   formatLimaTime,
   getLimaDate,
 } from "@/features/attendance/lib/date-time";
-import { reportFilterSchema } from "@/features/reports/schemas/report";
-import { getManagementReport } from "@/features/reports/server/report-service";
+import { MonthlyBusinessReport } from "@/features/reports/components/monthly-business-report";
+import {
+  monthlyReportFilterSchema,
+  reportFilterSchema,
+  type MonthlyReportFilters,
+} from "@/features/reports/schemas/report";
+import {
+  getAdminMonthlyBusinessReport,
+  getManagementReport,
+} from "@/features/reports/server/report-service";
 import type { ReconciliationRow } from "@/features/reports/types";
 
 export const metadata: Metadata = { title: "Reportes" };
@@ -25,6 +33,8 @@ type ReportsPageProps = {
   searchParams: Promise<{
     date?: string | string[];
     location_id?: string | string[];
+    month?: string | string[];
+    monthly_location_id?: string | string[];
     user_id?: string | string[];
   }>;
 };
@@ -56,8 +66,9 @@ function groupByShift(rows: ReconciliationRow[]) {
 }
 
 export default async function ReportsPage({ searchParams }: ReportsPageProps) {
-  await requirePermission("reports.read");
+  const profile = await requirePermission("reports.read");
   const rawSearchParams = await searchParams;
+  const currentLimaMonth = getLimaDate().slice(0, 7);
   const parsedFilters = reportFilterSchema.safeParse({
     date: singleValue(rawSearchParams.date) ?? getLimaDate(),
     location_id: singleValue(rawSearchParams.location_id),
@@ -66,7 +77,21 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
   const filters = parsedFilters.success
     ? parsedFilters.data
     : { date: getLimaDate(), location_id: undefined, user_id: undefined };
-  const report = await getManagementReport(filters);
+  const parsedMonthlyFilters = monthlyReportFilterSchema.safeParse({
+    month: singleValue(rawSearchParams.month) ?? currentLimaMonth,
+    monthly_location_id: singleValue(rawSearchParams.monthly_location_id),
+  });
+  const monthlyFiltersAreValid = parsedMonthlyFilters.success
+    && parsedMonthlyFilters.data.month <= currentLimaMonth;
+  const monthlyFilters: MonthlyReportFilters = monthlyFiltersAreValid
+    ? parsedMonthlyFilters.data
+    : { month: currentLimaMonth, monthly_location_id: undefined };
+  const [report, monthlyReport] = await Promise.all([
+    getManagementReport(filters),
+    profile.role === "ADMIN"
+      ? getAdminMonthlyBusinessReport(monthlyFilters)
+      : Promise.resolve(null),
+  ]);
   const shifts = groupByShift(report.rows);
   const totals = shifts.reduce(
     (summary, shiftRows) => ({
@@ -92,8 +117,31 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
         </p>
       </section>
 
+      {profile.role === "ADMIN" && monthlyReport ? (
+        <>
+          <MonthlyBusinessReport
+            currentLimaMonth={currentLimaMonth}
+            dailyFilters={filters}
+            filters={monthlyFilters}
+            locations={report.locations}
+            report={monthlyReport}
+          />
+          {!monthlyFiltersAreValid ? (
+            <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+              El mes o local recibido no era válido y el análisis mensual se restableció al periodo actual.
+            </p>
+          ) : null}
+        </>
+      ) : null}
+
       <section className="rounded-3xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7">
         <form className="grid gap-4 md:grid-cols-4" method="get">
+          {profile.role === "ADMIN" ? (
+            <>
+              <input name="month" type="hidden" value={monthlyFilters.month} />
+              {monthlyFilters.monthly_location_id ? <input name="monthly_location_id" type="hidden" value={monthlyFilters.monthly_location_id} /> : null}
+            </>
+          ) : null}
           <label className="space-y-1.5 text-sm font-medium text-stone-700">
             Fecha operativa
             <input className="h-10 w-full rounded-xl border border-stone-200 bg-white px-3 font-normal" defaultValue={filters.date} name="date" type="date" />

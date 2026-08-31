@@ -24,6 +24,7 @@ export class ShiftServiceError extends Error {
       | "ALREADY_RECORDED"
       | "LOCATION_UNAVAILABLE"
       | "INVALID_OPENING"
+      | "INVALID_DATE"
       | "FORBIDDEN"
       | "UNKNOWN",
     message: string,
@@ -57,6 +58,14 @@ function toShiftServiceError(error: PostgrestError) {
     SHIFT_INVALID_CASH: {
       code: "INVALID_OPENING",
       message: "El efectivo inicial no es válido.",
+    },
+    SHIFT_INVALID_DATE: {
+      code: "INVALID_DATE",
+      message: "La fecha operativa seleccionada no es válida.",
+    },
+    SHIFT_DATE_FORBIDDEN: {
+      code: "FORBIDDEN",
+      message: "Solo un administrador puede seleccionar la fecha operativa.",
     },
     SHIFT_INVALID_ITEMS: {
       code: "INVALID_OPENING",
