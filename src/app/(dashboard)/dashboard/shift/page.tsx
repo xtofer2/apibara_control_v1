@@ -12,7 +12,7 @@ import {
 } from "@/features/shifts/lib/date-time";
 import { getShiftDashboard } from "@/features/shifts/server/shift-service";
 
-export const metadata: Metadata = { title: "Turno operativo" };
+export const metadata: Metadata = { title: "Apertura de turno" };
 
 export default async function ShiftPage() {
   const profile = await requirePermission("shifts.operate");
@@ -28,7 +28,7 @@ export default async function ShiftPage() {
           <Clock3 aria-hidden="true" className="size-4" /> Operación diaria
         </div>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-stone-950 sm:text-4xl">
-          Turnos y apertura
+          Apertura de turno
         </h1>
         <p className="mt-3 max-w-3xl leading-7 text-stone-600">
           Cada sede admite un solo turno abierto. La apertura queda confirmada con hora de servidor y no puede editarse silenciosamente.

@@ -9,6 +9,7 @@ import {
   openShift,
   ShiftServiceError,
 } from "@/features/shifts/server/shift-service";
+import { createSuccessFeedback } from "@/lib/action-feedback";
 
 export async function openShiftAction(
   _previousState: ShiftActionState,
@@ -60,8 +61,5 @@ export async function openShiftAction(
 
   revalidatePath("/dashboard/shift");
   revalidatePath("/dashboard");
-  return {
-    status: "success",
-    message: "Turno y apertura registrados correctamente.",
-  };
+  return createSuccessFeedback("Turno abierto correctamente.");
 }

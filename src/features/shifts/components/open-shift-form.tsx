@@ -4,6 +4,7 @@ import { Banknote, Boxes, CalendarDays, LoaderCircle, MapPin, Play } from "lucid
 import { useActionState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { OperationSuccessToast } from "@/components/operation-success-toast";
 import { initialShiftActionState } from "@/features/shifts/action-state";
 import { openShiftAction } from "@/features/shifts/actions";
 import type { ShiftLocation, ShiftProduct } from "@/features/shifts/types";
@@ -27,7 +28,13 @@ export function OpenShiftForm({
   );
 
   return (
-    <section className="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
+    <>
+      <OperationSuccessToast
+        description="La apertura quedó registrada con hora de servidor."
+        eventId={state.status === "success" ? state.feedbackId : undefined}
+        message={state.status === "success" ? state.message : undefined}
+      />
+      <section className={`rounded-3xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8 ${state.status === "success" ? "operation-success-surface" : ""}`} key={state.feedbackId ?? "open-shift-form"}>
       <div className="flex items-start gap-3">
         <div className="flex size-11 items-center justify-center rounded-2xl bg-orange-50 text-orange-600">
           <Play aria-hidden="true" className="size-5" />
@@ -152,10 +159,11 @@ export function OpenShiftForm({
             type="submit"
           >
             {pending ? <LoaderCircle aria-hidden="true" className="animate-spin" /> : <Play aria-hidden="true" />}
-            Confirmar apertura
+            {pending ? "Abriendo turno..." : "Confirmar apertura"}
           </Button>
         </form>
       )}
-    </section>
+      </section>
+    </>
   );
 }

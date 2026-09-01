@@ -128,3 +128,70 @@
     @apply font-sans;
   }
 }
+
+@keyframes operation-success-wash {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes operation-success-toast-enter {
+  from { opacity: 0; transform: translateY(-0.75rem) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes operation-success-toast-exit {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-0.5rem) scale(0.98); }
+}
+
+@keyframes operation-success-check {
+  0% { transform: scale(0.55); }
+  65% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+@keyframes operation-success-progress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+@keyframes operation-success-surface {
+  0% { box-shadow: 0 0 0 0 rgb(16 185 129 / 0); }
+  35% { box-shadow: 0 0 0 5px rgb(16 185 129 / 0.2); }
+  100% { box-shadow: 0 0 0 0 rgb(16 185 129 / 0); }
+}
+
+.operation-success-wash {
+  animation: operation-success-wash 900ms ease-out forwards;
+}
+
+.operation-success-toast-enter {
+  animation: operation-success-toast-enter 280ms ease-out both;
+}
+
+.operation-success-toast-exit {
+  animation: operation-success-toast-exit 250ms ease-in both;
+}
+
+.operation-success-check {
+  animation: operation-success-check 420ms ease-out both;
+}
+
+.operation-success-progress {
+  animation: operation-success-progress 4s linear forwards;
+}
+
+.operation-success-surface {
+  animation: operation-success-surface 1.2s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .operation-success-wash,
+  .operation-success-toast-enter,
+  .operation-success-toast-exit,
+  .operation-success-check,
+  .operation-success-progress,
+  .operation-success-surface {
+    animation: none;
+  }
+}

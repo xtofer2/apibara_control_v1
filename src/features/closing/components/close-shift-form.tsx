@@ -4,6 +4,7 @@ import { Banknote, CalendarDays, CheckCircle2, LoaderCircle, Smartphone } from "
 import { useActionState, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { OperationSuccessToast } from "@/components/operation-success-toast";
 import { initialClosingActionState } from "@/features/closing/action-state";
 import { closeShiftAction } from "@/features/closing/actions";
 import type { ClosingOpenShift, ClosingProduct } from "@/features/closing/types";
@@ -26,13 +27,32 @@ export function CloseShiftForm({
   const [operationalDate, setOperationalDate] = useState(
     openShifts[0]?.operational_date ?? currentLimaDate,
   );
+  const successToast = (
+    <OperationSuccessToast
+      description="El inventario final y los pagos quedaron guardados con hora de servidor."
+      eventId={state.status === "success" ? state.feedbackId : undefined}
+      message={state.status === "success" ? state.message : undefined}
+    />
+  );
 
   if (openShifts.length === 0) {
-    return <div className="rounded-2xl border border-dashed border-stone-300 bg-white p-8 text-center text-sm text-stone-500">No hay turnos abiertos para cerrar.</div>;
+    return (
+      <>
+        {successToast}
+        <div className={`rounded-2xl border border-dashed border-stone-300 bg-white p-8 text-center text-sm text-stone-500 ${state.status === "success" ? "operation-success-surface" : ""}`} key={state.feedbackId ?? "no-open-shifts"}>
+          {state.status === "success" && state.message ? (
+            <p className="mx-auto mb-3 max-w-md rounded-xl bg-emerald-50 px-4 py-3 font-medium text-emerald-700" role="status">{state.message}</p>
+          ) : null}
+          No hay turnos abiertos para cerrar.
+        </div>
+      </>
+    );
   }
 
   return (
-    <section className="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
+    <>
+      {successToast}
+      <section className={`rounded-3xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8 ${state.status === "success" ? "operation-success-surface" : ""}`} key={state.feedbackId ?? "close-shift-form"}>
       <h2 className="text-xl font-semibold text-stone-950">Confirmar cierre</h2>
       <p className="mt-1 text-sm text-stone-500">Esta operación es definitiva. Verifica el conteo físico y ambos medios de pago.</p>
       <form action={formAction} className="mt-7 space-y-7">
@@ -106,9 +126,11 @@ export function CloseShiftForm({
         </fieldset>
         {state.message ? <p className={state.status === "error" ? "rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700" : "rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700"} role={state.status === "error" ? "alert" : "status"}>{state.message}</p> : null}
         <Button className="h-11 bg-stone-950 px-5 text-white hover:bg-stone-800" disabled={pending} type="submit">
-          {pending ? <LoaderCircle aria-hidden="true" className="animate-spin" /> : <CheckCircle2 aria-hidden="true" />} Cerrar turno definitivamente
+          {pending ? <LoaderCircle aria-hidden="true" className="animate-spin" /> : <CheckCircle2 aria-hidden="true" />}
+          {pending ? "Cerrando turno..." : "Cerrar turno definitivamente"}
         </Button>
       </form>
-    </section>
+      </section>
+    </>
   );
 }

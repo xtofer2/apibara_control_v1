@@ -1,5 +1,7 @@
 export type ShiftActionState = {
   status: "idle" | "success" | "error";
+  feedbackAt?: number;
+  feedbackId?: string;
   message?: string;
   fieldErrors?: Record<string, string[]>;
 };

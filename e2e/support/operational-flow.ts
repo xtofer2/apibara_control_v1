@@ -36,6 +36,8 @@ export async function openShift(page: Page, location: string) {
   }
 
   await page.getByRole("button", { name: "Confirmar apertura" }).click();
+  await expect(page.getByTestId("operation-success-toast"))
+    .toContainText("Turno abierto correctamente.");
   await expect(page.getByRole("heading", { name: location, exact: true }))
     .toBeVisible();
 }

@@ -6,6 +6,7 @@ import { requirePermission } from "@/features/auth/server/require-permission";
 import type { ClosingActionState } from "@/features/closing/action-state";
 import { closeShiftSchema } from "@/features/closing/schemas/closing";
 import { closeShift, ClosingServiceError } from "@/features/closing/server/closing-service";
+import { createSuccessFeedback } from "@/lib/action-feedback";
 
 export async function closeShiftAction(
   _previousState: ClosingActionState,
@@ -40,5 +41,5 @@ export async function closeShiftAction(
   }
   revalidatePath("/dashboard/closing");
   revalidatePath("/dashboard/shift");
-  return { status: "success", message: "Turno cerrado correctamente." };
+  return createSuccessFeedback("Turno cerrado correctamente.");
 }

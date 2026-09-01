@@ -10,6 +10,7 @@ import {
   checkOut,
 } from "@/features/attendance/server/attendance-service";
 import { requirePermission } from "@/features/auth/server/require-permission";
+import { createSuccessFeedback } from "@/lib/action-feedback";
 
 function operationError(error: unknown): AttendanceActionState {
   if (error instanceof AttendanceServiceError) {
@@ -47,7 +48,7 @@ export async function checkInAction(
   }
 
   revalidatePath("/dashboard/attendance");
-  return { status: "success", message: "Entrada registrada correctamente." };
+  return createSuccessFeedback("Entrada registrada correctamente.");
 }
 
 export async function checkOutAction(
@@ -65,5 +66,5 @@ export async function checkOutAction(
   }
 
   revalidatePath("/dashboard/attendance");
-  return { status: "success", message: "Salida registrada correctamente." };
+  return createSuccessFeedback("Salida registrada correctamente.");
 }

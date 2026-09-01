@@ -34,7 +34,7 @@ const employeeItems: NavigationItem[] = [
     available: true,
   },
   {
-    label: "Turno operativo",
+    label: "Apertura de turno",
     href: "/dashboard/shift",
     icon: "shift",
     available: true,

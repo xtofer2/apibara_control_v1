@@ -4,6 +4,7 @@ import { Clock3, LoaderCircle, LogIn, LogOut, MapPin } from "lucide-react";
 import { useActionState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { OperationSuccessToast } from "@/components/operation-success-toast";
 import { initialAttendanceActionState } from "@/features/attendance/action-state";
 import {
   checkInAction,
@@ -55,10 +56,32 @@ export function AttendanceControl({
     checkOutAction,
     initialAttendanceActionState,
   );
+  const latestSuccess = checkInState.status !== "success"
+    ? checkOutState.status === "success" ? checkOutState : null
+    : checkOutState.status !== "success"
+      ? checkInState
+      : (checkOutState.feedbackAt ?? 0) > (checkInState.feedbackAt ?? 0)
+        ? checkOutState
+        : checkInState;
+  const successToast = (
+    <OperationSuccessToast
+      description={latestSuccess?.feedbackId === checkOutState.feedbackId
+        ? "Tu jornada quedó finalizada con hora de servidor."
+        : "Tu jornada quedó iniciada con hora de servidor."}
+      eventId={latestSuccess?.feedbackId}
+      message={latestSuccess?.message}
+    />
+  );
 
   if (current) {
+    const feedback = checkOutState.status === "error"
+      ? checkOutState
+      : latestSuccess;
+
     return (
-      <section className="rounded-3xl border border-emerald-200 bg-emerald-50/60 p-6 sm:p-8">
+      <>
+        {successToast}
+        <section className={`rounded-3xl border border-emerald-200 bg-emerald-50/60 p-6 sm:p-8 ${latestSuccess ? "operation-success-surface" : ""}`} key={latestSuccess?.feedbackId ?? "attendance-current"}>
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2 text-sm font-semibold text-emerald-700">
@@ -85,22 +108,29 @@ export function AttendanceControl({
               ) : (
                 <LogOut aria-hidden="true" />
               )}
-              Registrar salida
+              {checkOutPending ? "Registrando salida..." : "Registrar salida"}
             </Button>
           </form>
         </div>
         <div className="mt-5">
           <Feedback
-            message={checkOutState.message}
-            status={checkOutState.status}
+            message={feedback?.message}
+            status={feedback?.status ?? "idle"}
           />
         </div>
-      </section>
+        </section>
+      </>
     );
   }
 
+  const feedback = checkInState.status === "error"
+    ? checkInState
+    : latestSuccess;
+
   return (
-    <section className="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
+    <>
+      {successToast}
+      <section className={`rounded-3xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8 ${latestSuccess ? "operation-success-surface" : ""}`} key={latestSuccess?.feedbackId ?? "attendance-check-in"}>
       <div className="flex items-start gap-3">
         <div className="flex size-11 items-center justify-center rounded-2xl bg-orange-50 text-orange-600">
           <LogIn aria-hidden="true" className="size-5" />
@@ -152,7 +182,7 @@ export function AttendanceControl({
           ) : null}
         </div>
 
-        <Feedback message={checkInState.message} status={checkInState.status} />
+        <Feedback message={feedback?.message} status={feedback?.status ?? "idle"} />
 
         <Button
           className="h-11 bg-orange-600 px-5 text-white hover:bg-orange-700"
@@ -164,9 +194,10 @@ export function AttendanceControl({
           ) : (
             <LogIn aria-hidden="true" />
           )}
-          Registrar entrada
+          {checkInPending ? "Registrando entrada..." : "Registrar entrada"}
         </Button>
       </form>
-    </section>
+      </section>
+    </>
   );
 }

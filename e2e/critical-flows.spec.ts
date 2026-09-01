@@ -22,6 +22,8 @@ test("employee login, attendance, opening and closing", async ({ page }) => {
   await page.getByRole("combobox", { name: "Sede", exact: true })
     .selectOption({ label: "Av. Jesus · JESUS" });
   await page.getByRole("button", { name: "Registrar entrada" }).click();
+  await expect(page.getByTestId("operation-success-toast"))
+    .toContainText("Entrada registrada correctamente.");
   await expect(page.getByText("Jornada en curso")).toBeVisible();
 
   await openShift(page, "Av. Jesus");
@@ -35,8 +37,15 @@ test("employee login, attendance, opening and closing", async ({ page }) => {
   await page.getByRole("spinbutton", { name: "Yape" }).fill("150");
   await page.getByRole("button", { name: "Cerrar turno definitivamente" }).click();
 
+  await expect(page.getByTestId("operation-success-toast"))
+    .toContainText("Turno cerrado correctamente.");
   await expect(page.getByText("No hay turnos abiertos para cerrar.")).toBeVisible();
   await expect(page.getByText("S/ 350.00", { exact: true })).toBeVisible();
+
+  await page.goto("/dashboard/attendance");
+  await page.getByRole("button", { name: "Registrar salida" }).click();
+  await expect(page.getByTestId("operation-success-toast"))
+    .toContainText("Salida registrada correctamente.");
 });
 
 test("sent transfer is received with exact quantities", async ({ page }) => {
