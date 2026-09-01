@@ -12,12 +12,13 @@ export async function closeShiftAction(
   formData: FormData,
 ): Promise<ClosingActionState> {
   void _previousState;
-  await requirePermission("closing.operate");
+  const profile = await requirePermission("closing.operate");
   const items = Array.from(formData.entries())
     .filter(([name]) => name.startsWith("closing."))
     .map(([name, quantity]) => ({ product_id: name.slice("closing.".length), quantity }));
   const parsed = closeShiftSchema.safeParse({
     work_shift_id: formData.get("work_shift_id"),
+    operational_date: formData.get("operational_date"),
     items,
     payments: [
       { code: "CASH", amount: formData.get("cash_amount") },
@@ -25,6 +26,13 @@ export async function closeShiftAction(
     ],
   });
   if (!parsed.success) return { status: "error", message: "Revisa el conteo final y los montos de efectivo y Yape." };
+
+  if (parsed.data.operational_date && profile.role !== "ADMIN") {
+    return {
+      status: "error",
+      message: "Solo un administrador puede seleccionar la fecha operativa del cierre.",
+    };
+  }
 
   try { await closeShift(parsed.data); }
   catch (error) {

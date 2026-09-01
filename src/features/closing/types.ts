@@ -11,7 +11,11 @@ export type ClosingOpenShift = Pick<Database["public"]["Tables"]["work_shifts"][
 export type ClosingHistoryRow = Pick<Database["public"]["Tables"]["closings"]["Row"],
   "id" | "work_shift_id" | "created_by" | "created_at"> & {
   creator: { full_name: string } | null;
-  shift: { location: { name: string; code: string } | null; closed_at: string | null } | null;
+  shift: {
+    closed_at: string | null;
+    location: { name: string; code: string } | null;
+    operational_date: string;
+  } | null;
   items: Array<{ product_id: string; quantity: number }>;
   payments: Array<{ amount: number; method: { code: string; name: string } | null }>;
 };

@@ -1,17 +1,31 @@
 "use client";
 
-import { Banknote, CheckCircle2, LoaderCircle, Smartphone } from "lucide-react";
-import { useActionState } from "react";
+import { Banknote, CalendarDays, CheckCircle2, LoaderCircle, Smartphone } from "lucide-react";
+import { useActionState, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { initialClosingActionState } from "@/features/closing/action-state";
 import { closeShiftAction } from "@/features/closing/actions";
 import type { ClosingOpenShift, ClosingProduct } from "@/features/closing/types";
 
-type Props = { openShifts: ClosingOpenShift[]; products: ClosingProduct[] };
+type Props = {
+  canChooseOperationalDate: boolean;
+  currentLimaDate: string;
+  openShifts: ClosingOpenShift[];
+  products: ClosingProduct[];
+};
 
-export function CloseShiftForm({ openShifts, products }: Props) {
+export function CloseShiftForm({
+  canChooseOperationalDate,
+  currentLimaDate,
+  openShifts,
+  products,
+}: Props) {
   const [state, formAction, pending] = useActionState(closeShiftAction, initialClosingActionState);
+  const [selectedShiftId, setSelectedShiftId] = useState(openShifts[0]?.id ?? "");
+  const [operationalDate, setOperationalDate] = useState(
+    openShifts[0]?.operational_date ?? currentLimaDate,
+  );
 
   if (openShifts.length === 0) {
     return <div className="rounded-2xl border border-dashed border-stone-300 bg-white p-8 text-center text-sm text-stone-500">No hay turnos abiertos para cerrar.</div>;
@@ -22,12 +36,48 @@ export function CloseShiftForm({ openShifts, products }: Props) {
       <h2 className="text-xl font-semibold text-stone-950">Confirmar cierre</h2>
       <p className="mt-1 text-sm text-stone-500">Esta operación es definitiva. Verifica el conteo físico y ambos medios de pago.</p>
       <form action={formAction} className="mt-7 space-y-7">
-        <label className="block space-y-2 text-sm font-medium text-stone-700">
-          Turno abierto
-          <select className="h-11 w-full rounded-xl border border-stone-200 bg-white px-3" name="work_shift_id" required>
-            {openShifts.map((shift) => <option key={shift.id} value={shift.id}>{shift.location?.name ?? "Sede registrada"}</option>)}
-          </select>
-        </label>
+        <div className={`grid gap-4 ${canChooseOperationalDate ? "sm:grid-cols-2" : ""}`}>
+          <label className="block space-y-2 text-sm font-medium text-stone-700">
+            Turno abierto
+            <select
+              className="h-11 w-full rounded-xl border border-stone-200 bg-white px-3"
+              name="work_shift_id"
+              onChange={(event) => {
+                const nextShift = openShifts.find((shift) => shift.id === event.target.value);
+                setSelectedShiftId(event.target.value);
+                setOperationalDate(nextShift?.operational_date ?? currentLimaDate);
+              }}
+              required
+              value={selectedShiftId}
+            >
+              {openShifts.map((shift) => (
+                <option key={shift.id} value={shift.id}>
+                  {shift.location?.name ?? "Sede registrada"} · {shift.operational_date}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          {canChooseOperationalDate ? (
+            <label className="block space-y-2 text-sm font-medium text-stone-700">
+              <span className="flex items-center gap-2">
+                <CalendarDays aria-hidden="true" className="size-4" /> Fecha operativa
+              </span>
+              <input
+                className="h-11 w-full rounded-xl border border-stone-200 bg-white px-3"
+                max={currentLimaDate}
+                name="operational_date"
+                onChange={(event) => setOperationalDate(event.target.value)}
+                required
+                type="date"
+                value={operationalDate}
+              />
+              <span className="block text-xs font-normal text-stone-500">
+                Define la jornada reportada. La hora real del cierre queda registrada en servidor.
+              </span>
+            </label>
+          ) : null}
+        </div>
         <fieldset>
           <legend className="text-sm font-semibold text-stone-900">Conteo físico final</legend>
           <p className="mt-1 text-sm text-stone-500">Todos los productos activos deben incluirse, incluso con cantidad cero.</p>

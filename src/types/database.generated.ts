@@ -775,6 +775,7 @@ export type Database = {
       close_operational_shift: {
         Args: {
           selected_items: Json
+          selected_operational_date?: string
           selected_payments: Json
           selected_work_shift_id: string
         }

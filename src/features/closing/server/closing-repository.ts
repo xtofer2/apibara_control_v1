@@ -23,7 +23,7 @@ export function findClosingHistory(supabase: ClosingClient) {
   return supabase.from("closings").select(`
     id, work_shift_id, created_by, created_at,
     creator:profiles(full_name),
-    shift:work_shifts(closed_at, location:locations(name, code)),
+    shift:work_shifts(closed_at, operational_date, location:locations(name, code)),
     items:closing_items(product_id, quantity),
     payments:closing_payments(amount, method:payment_methods(code, name))
   `).order("created_at", { ascending: false }).limit(20);
@@ -32,6 +32,7 @@ export function findClosingHistory(supabase: ClosingClient) {
 export function executeCloseShift(supabase: ClosingClient, input: CloseShiftInput) {
   return supabase.rpc("close_operational_shift", {
     selected_items: input.items as Json,
+    selected_operational_date: input.operational_date,
     selected_payments: input.payments as Json,
     selected_work_shift_id: input.work_shift_id,
   });

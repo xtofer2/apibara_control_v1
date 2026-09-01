@@ -24,6 +24,9 @@ function toClosingError(error: PostgrestError) {
     CLOSING_INVALID_PAYMENTS: "Registra montos válidos para efectivo y Yape.",
     CLOSING_PAYMENT_METHOD_UNAVAILABLE: "Efectivo o Yape no están disponibles.",
     CLOSING_ALREADY_RECORDED: "El turno ya tiene un cierre registrado.",
+    CLOSING_DATE_ALREADY_RECORDED: "La sede ya tiene un turno registrado en la fecha operativa seleccionada.",
+    CLOSING_DATE_FORBIDDEN: "Solo un administrador puede seleccionar la fecha operativa del cierre.",
+    CLOSING_INVALID_DATE: "La fecha operativa del cierre no es válida ni puede estar en el futuro.",
   };
   return new ClosingServiceError(messages[error.message] ?? "No se pudo cerrar el turno.");
 }
