@@ -15,26 +15,19 @@ function totalIncome(rows: MonthlyDailyIncomeRow[]) {
   return rows.reduce((total, row) => total + row.total_income, 0);
 }
 
-export function summarizeMonthlyBusiness({
+export function summarizeBusinessPeriod({
   currentDays,
-  currentMonth,
-  currentLimaMonth,
   locations,
   previousDays,
   products,
 }: {
   currentDays: MonthlyDailyIncomeRow[];
-  currentMonth: string;
-  currentLimaMonth: string;
   locations: MonthlyLocationIncomeRow[];
   previousDays: MonthlyDailyIncomeRow[];
   products: MonthlyProductSalesRow[];
 }) {
-  const comparablePreviousDays = currentMonth === currentLimaMonth
-    ? previousDays.slice(0, currentDays.length)
-    : previousDays;
   const income = totalIncome(currentDays);
-  const previousIncome = totalIncome(comparablePreviousDays);
+  const previousIncome = totalIncome(previousDays);
   const daysWithClosing = currentDays.filter((day) => day.closed_shift_count > 0);
   const bestDay = daysWithClosing.reduce<MonthlyDailyIncomeRow | null>(
     (best, day) => !best || day.total_income > best.total_income ? day : best,
@@ -66,4 +59,30 @@ export function summarizeMonthlyBusiness({
     yape: currentDays.reduce((total, day) => total + day.yape_amount, 0),
     zeroIncomeDays: daysWithClosing.filter((day) => day.total_income === 0).length,
   };
+}
+
+export function summarizeMonthlyBusiness({
+  currentDays,
+  currentMonth,
+  currentLimaMonth,
+  locations,
+  previousDays,
+  products,
+}: {
+  currentDays: MonthlyDailyIncomeRow[];
+  currentMonth: string;
+  currentLimaMonth: string;
+  locations: MonthlyLocationIncomeRow[];
+  previousDays: MonthlyDailyIncomeRow[];
+  products: MonthlyProductSalesRow[];
+}) {
+  const comparablePreviousDays = currentMonth === currentLimaMonth
+    ? previousDays.slice(0, currentDays.length)
+    : previousDays;
+  return summarizeBusinessPeriod({
+    currentDays,
+    locations,
+    previousDays: comparablePreviousDays,
+    products,
+  });
 }

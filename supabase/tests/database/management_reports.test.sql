@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(19);
+select plan(25);
 
 insert into auth.users (
   id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
@@ -237,6 +237,11 @@ select throws_ok(
   '42501', 'REPORTS_ADMIN_ONLY',
   'managers cannot execute the monthly business report'
 );
+select throws_ok(
+  $$select * from public.management_period_daily_income('2026-08-10', '2026-08-16')$$,
+  '42501', 'REPORTS_ADMIN_ONLY',
+  'managers cannot execute weekly business reports'
+);
 
 select set_config('request.jwt.claims', '{"sub":"46000000-0000-4000-8000-000000000004","role":"authenticated"}', true);
 
@@ -268,6 +273,33 @@ select results_eq(
   ) where product_code = 'EMP_CLASSIC'$$,
   'values (8::numeric)',
   'monthly product sales reuse the documented reconciliation formula'
+);
+select results_eq(
+  $$select count(*)::bigint from public.management_period_daily_income('2026-08-10', '2026-08-16')$$,
+  'values (7::bigint)',
+  'period reports return every calendar day in the selected week'
+);
+select results_eq(
+  $$select sum(total_income)::numeric from public.management_period_daily_income('2026-08-10', '2026-08-16')$$,
+  'values (350::numeric)',
+  'period income sums payments once per closed shift'
+);
+select results_eq(
+  $$select sum(total_income)::numeric from public.management_period_location_income('2026-08-10', '2026-08-16')$$,
+  'values (350::numeric)',
+  'period location income does not duplicate payments'
+);
+select results_eq(
+  $$select calculated_sales from public.management_period_product_sales(
+    '2026-08-10', '2026-08-16', '10000000-0000-4000-8000-000000000002'
+  ) where product_code = 'EMP_CLASSIC'$$,
+  'values (8::numeric)',
+  'period product sales reuse the reconciliation formula'
+);
+select throws_ok(
+  $$select * from public.management_period_daily_income('2026-08-10', '2999-01-01')$$,
+  '22023', 'REPORT_PERIOD_INVALID_RANGE',
+  'period reports reject future or oversized ranges'
 );
 
 select * from finish();

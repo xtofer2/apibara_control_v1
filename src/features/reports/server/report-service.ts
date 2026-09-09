@@ -5,12 +5,16 @@ import type { PostgrestError } from "@supabase/supabase-js";
 import { getPreviousMonth } from "@/features/reports/lib/monthly-summary";
 import type {
   MonthlyReportFilters,
+  PeriodReportFilters,
   ReportFilters,
 } from "@/features/reports/schemas/report";
 import type {
   MonthlyDailyIncomeRow,
   MonthlyLocationIncomeRow,
   MonthlyProductSalesRow,
+  PeriodDailyIncomeRow,
+  PeriodLocationIncomeRow,
+  PeriodProductSalesRow,
   ReconciliationRow,
 } from "@/features/reports/types";
 import { createClient } from "@/lib/supabase/server";
@@ -19,6 +23,9 @@ import {
   findMonthlyDailyIncome,
   findMonthlyLocationIncome,
   findMonthlyProductSales,
+  findPeriodDailyIncome,
+  findPeriodLocationIncome,
+  findPeriodProductSales,
   findReconciliationReport,
   findReportEmployees,
   findReportLocations,
@@ -26,7 +33,7 @@ import {
 
 export class ReportServiceError extends Error {
   constructor(
-    public readonly code: "FORBIDDEN" | "INVALID_MONTH" | "UNKNOWN",
+    public readonly code: "FORBIDDEN" | "INVALID_MONTH" | "INVALID_PERIOD" | "UNKNOWN",
     message: string,
   ) {
     super(message);
@@ -52,10 +59,53 @@ function toReportServiceError(error: PostgrestError) {
     );
   }
 
+  if (error.message === "REPORT_PERIOD_INVALID_RANGE") {
+    return new ReportServiceError(
+      "INVALID_PERIOD",
+      "El intervalo seleccionado no es válido para el reporte.",
+    );
+  }
+
   return new ReportServiceError(
     "UNKNOWN",
     "No se pudo cargar la conciliación gerencial.",
   );
+}
+
+export async function getAdminPeriodBusinessReport(
+  filters: PeriodReportFilters,
+  previousFilters: PeriodReportFilters,
+) {
+  const supabase = await createClient();
+  const [
+    daysResult,
+    previousDaysResult,
+    locationsResult,
+    productsResult,
+    availableLocationsResult,
+  ] = await Promise.all([
+    findPeriodDailyIncome(supabase, filters),
+    findPeriodDailyIncome(supabase, previousFilters),
+    findPeriodLocationIncome(supabase, filters),
+    findPeriodProductSales(supabase, filters),
+    findReportLocations(supabase),
+  ]);
+  const error =
+    daysResult.error
+    ?? previousDaysResult.error
+    ?? locationsResult.error
+    ?? productsResult.error
+    ?? availableLocationsResult.error;
+
+  if (error) throw toReportServiceError(error);
+
+  return {
+    availableLocations: availableLocationsResult.data ?? [],
+    days: (daysResult.data ?? []) as PeriodDailyIncomeRow[],
+    locations: (locationsResult.data ?? []) as PeriodLocationIncomeRow[],
+    previousDays: (previousDaysResult.data ?? []) as PeriodDailyIncomeRow[],
+    products: (productsResult.data ?? []) as PeriodProductSalesRow[],
+  };
 }
 
 export async function getAdminMonthlyBusinessReport(

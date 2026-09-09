@@ -4,6 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type {
   MonthlyReportFilters,
+  PeriodReportFilters,
   ReportFilters,
 } from "@/features/reports/schemas/report";
 import type { Database } from "@/types/database.generated";
@@ -62,4 +63,33 @@ export function findMonthlyProductSales(
   filters: MonthlyReportFilters,
 ) {
   return supabase.rpc("management_monthly_product_sales", monthlyRpcArgs(filters));
+}
+
+function periodRpcArgs(filters: PeriodReportFilters) {
+  return {
+    selected_from: filters.from,
+    selected_location_id: filters.location_id,
+    selected_to: filters.to,
+  };
+}
+
+export function findPeriodDailyIncome(
+  supabase: ReportClient,
+  filters: PeriodReportFilters,
+) {
+  return supabase.rpc("management_period_daily_income", periodRpcArgs(filters));
+}
+
+export function findPeriodLocationIncome(
+  supabase: ReportClient,
+  filters: PeriodReportFilters,
+) {
+  return supabase.rpc("management_period_location_income", periodRpcArgs(filters));
+}
+
+export function findPeriodProductSales(
+  supabase: ReportClient,
+  filters: PeriodReportFilters,
+) {
+  return supabase.rpc("management_period_product_sales", periodRpcArgs(filters));
 }

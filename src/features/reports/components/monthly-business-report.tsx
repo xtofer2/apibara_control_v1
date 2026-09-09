@@ -15,15 +15,12 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-import { summarizeMonthlyBusiness } from "@/features/reports/lib/monthly-summary";
+import { summarizeBusinessPeriod } from "@/features/reports/lib/monthly-summary";
+import type { DateInterval } from "@/features/reports/lib/report-period";
 import type {
-  MonthlyReportFilters,
-  ReportFilters,
-} from "@/features/reports/schemas/report";
-import type {
-  MonthlyDailyIncomeRow,
-  MonthlyLocationIncomeRow,
-  MonthlyProductSalesRow,
+  PeriodDailyIncomeRow,
+  PeriodLocationIncomeRow,
+  PeriodProductSalesRow,
 } from "@/features/reports/types";
 
 type LocationOption = {
@@ -32,17 +29,20 @@ type LocationOption = {
   name: string;
 };
 
-type MonthlyBusinessReportProps = {
-  currentLimaMonth: string;
-  dailyFilters: ReportFilters;
-  filters: MonthlyReportFilters;
+type BusinessPeriodReportProps = {
+  currentLimaDate: string;
+  interval: DateInterval;
+  locationId?: string;
   locations: LocationOption[];
+  mode: "week" | "month";
   report: {
-    days: MonthlyDailyIncomeRow[];
-    locations: MonthlyLocationIncomeRow[];
-    previousDays: MonthlyDailyIncomeRow[];
-    products: MonthlyProductSalesRow[];
+    days: PeriodDailyIncomeRow[];
+    locations: PeriodLocationIncomeRow[];
+    previousDays: PeriodDailyIncomeRow[];
+    products: PeriodProductSalesRow[];
   };
+  selectedMonth: string;
+  selectedWeek: string;
 };
 
 const money = new Intl.NumberFormat("es-PE", {
@@ -76,21 +76,22 @@ function formatDay(value: string) {
   return shortDate.format(asUtcDate(value)).replace(".", "");
 }
 
-function formatProductQuantity(row: MonthlyProductSalesRow) {
+function formatProductQuantity(row: PeriodProductSalesRow) {
   return `${quantity.format(row.calculated_sales)} ${row.unit_type === "UNIT" ? "unid." : "L"}`;
 }
 
-export function MonthlyBusinessReport({
-  currentLimaMonth,
-  dailyFilters,
-  filters,
+export function BusinessPeriodReport({
+  currentLimaDate,
+  interval,
+  locationId,
   locations,
+  mode,
   report,
-}: MonthlyBusinessReportProps) {
-  const summary = summarizeMonthlyBusiness({
+  selectedMonth,
+  selectedWeek,
+}: BusinessPeriodReportProps) {
+  const summary = summarizeBusinessPeriod({
     currentDays: report.days,
-    currentLimaMonth,
-    currentMonth: filters.month,
     locations: report.locations,
     previousDays: report.previousDays,
     products: report.products,
@@ -104,11 +105,14 @@ export function MonthlyBusinessReport({
     1,
   );
   const selectedLocation = locations.find(
-    (location) => location.id === filters.monthly_location_id,
+    (location) => location.id === locationId,
   );
+  const isMonthly = mode === "month";
+  const currentLimaMonth = currentLimaDate.slice(0, 7);
+  const periodIsCurrent = interval.to === currentLimaDate;
 
   return (
-    <section className="space-y-6" aria-labelledby="monthly-report-title">
+    <section className="space-y-6" aria-labelledby="period-report-title">
       <div className="rounded-3xl border border-orange-200 bg-gradient-to-br from-orange-50 via-white to-amber-50 p-5 shadow-sm sm:p-7">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
           <div>
@@ -116,8 +120,8 @@ export function MonthlyBusinessReport({
               <TrendingUp aria-hidden="true" className="size-4" />
               Inteligencia del negocio · Solo administrador
             </div>
-            <h2 id="monthly-report-title" className="mt-2 text-2xl font-semibold tracking-tight text-stone-950 sm:text-3xl">
-              Resumen mensual
+            <h2 id="period-report-title" className="mt-2 text-2xl font-semibold tracking-tight text-stone-950 sm:text-3xl">
+              Resumen {isMonthly ? "mensual" : "semanal"}
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600">
               Ingresos por cierres, comportamiento diario, desempeño por local y cantidades vendidas por producto.
@@ -125,25 +129,33 @@ export function MonthlyBusinessReport({
           </div>
 
           <form className="grid gap-3 sm:grid-cols-[minmax(160px,1fr)_minmax(190px,1fr)_auto] xl:min-w-[660px]" method="get">
-            <input name="date" type="hidden" value={dailyFilters.date} />
-            {dailyFilters.location_id ? <input name="location_id" type="hidden" value={dailyFilters.location_id} /> : null}
-            {dailyFilters.user_id ? <input name="user_id" type="hidden" value={dailyFilters.user_id} /> : null}
+            <input name="view" type="hidden" value={mode} />
             <label className="space-y-1.5 text-sm font-medium text-stone-700">
-              Mes
-              <input
-                className="h-11 w-full rounded-xl border border-stone-200 bg-white px-3 font-normal"
-                defaultValue={filters.month}
-                max={currentLimaMonth}
-                name="month"
-                type="month"
-              />
+              {isMonthly ? "Mes" : "Semana desde"}
+              {isMonthly ? (
+                <input
+                  className="h-11 w-full rounded-xl border border-stone-200 bg-white px-3 font-normal"
+                  defaultValue={selectedMonth}
+                  max={currentLimaMonth}
+                  name="month"
+                  type="month"
+                />
+              ) : (
+                <input
+                  className="h-11 w-full rounded-xl border border-stone-200 bg-white px-3 font-normal"
+                  defaultValue={selectedWeek}
+                  max={currentLimaDate}
+                  name="week"
+                  type="date"
+                />
+              )}
             </label>
             <label className="space-y-1.5 text-sm font-medium text-stone-700">
               Local
               <select
                 className="h-11 w-full rounded-xl border border-stone-200 bg-white px-3 font-normal"
-                defaultValue={filters.monthly_location_id ?? ""}
-                name="monthly_location_id"
+                defaultValue={locationId ?? ""}
+                name="period_location_id"
               >
                 <option value="">Todos los locales</option>
                 {locations.map((location) => (
@@ -158,19 +170,21 @@ export function MonthlyBusinessReport({
         </div>
 
         <div className="mt-6 flex flex-wrap items-center gap-2 text-sm">
-          <span className="rounded-full bg-stone-950 px-3 py-1.5 font-medium text-white">{formatMonth(filters.month)}</span>
+          <span className="rounded-full bg-stone-950 px-3 py-1.5 font-medium text-white">
+            {isMonthly ? formatMonth(selectedMonth) : `${formatDay(interval.from)} – ${formatDay(interval.to)}`}
+          </span>
           <span className="rounded-full border border-stone-200 bg-white px-3 py-1.5 text-stone-600">
             {selectedLocation?.name ?? "Todos los locales"}
           </span>
-          {filters.month === currentLimaMonth ? (
-            <span className="rounded-full bg-blue-50 px-3 py-1.5 text-blue-700">Mes en curso · datos hasta hoy</span>
+          {periodIsCurrent ? (
+            <span className="rounded-full bg-blue-50 px-3 py-1.5 text-blue-700">Periodo en curso · datos hasta hoy</span>
           ) : null}
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard icon={Banknote} label="Ingresos del periodo" value={money.format(summary.income)} />
-        <VariationCard value={summary.variationPercent} />
+        <VariationCard comparisonLabel={isMonthly ? "mes anterior" : "semana anterior"} value={summary.variationPercent} />
         <MetricCard icon={BarChart3} label="Promedio por día con cierre" value={money.format(summary.averageIncome)} />
         <MetricCard icon={CalendarCheck2} label="Días con cierre" value={`${summary.daysWithClosing} de ${report.days.length}`} />
       </div>
@@ -292,20 +306,20 @@ function MetricCard({ icon: IconComponent, label, value }: { icon: Icon; label: 
   );
 }
 
-function VariationCard({ value }: { value: number | null }) {
+function VariationCard({ comparisonLabel, value }: { comparisonLabel: string; value: number | null }) {
   const IconComponent = value == null ? ArrowRight : value >= 0 ? ArrowUpRight : ArrowDownRight;
   const color = value == null ? "text-stone-500" : value >= 0 ? "text-emerald-700" : "text-red-700";
 
   return (
     <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
       <IconComponent aria-hidden="true" className={`size-5 ${color}`} />
-      <p className="mt-4 text-sm text-stone-500">Variación vs. mes anterior</p>
+      <p className="mt-4 text-sm text-stone-500">Variación vs. {comparisonLabel}</p>
       <p className={`mt-1 text-xl font-semibold ${color}`}>{value == null ? "Sin base comparable" : `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`}</p>
     </article>
   );
 }
 
-function DayCard({ day, isBest, isLowest, maximumIncome }: { day: MonthlyDailyIncomeRow; isBest: boolean; isLowest: boolean; maximumIncome: number }) {
+function DayCard({ day, isBest, isLowest, maximumIncome }: { day: PeriodDailyIncomeRow; isBest: boolean; isLowest: boolean; maximumIncome: number }) {
   const noOperation = day.closed_shift_count === 0 && day.open_shift_count === 0;
   const pending = day.open_shift_count > 0;
   const stateClass = isBest

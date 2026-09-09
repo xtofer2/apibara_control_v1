@@ -853,6 +853,51 @@ export type Database = {
           unit_type: Database["public"]["Enums"]["product_unit"]
         }[]
       }
+      management_period_daily_income: {
+        Args: {
+          selected_from: string
+          selected_location_id?: string
+          selected_to: string
+        }
+        Returns: {
+          cash_amount: number
+          closed_shift_count: number
+          open_shift_count: number
+          operational_date: string
+          total_income: number
+          yape_amount: number
+        }[]
+      }
+      management_period_location_income: {
+        Args: {
+          selected_from: string
+          selected_location_id?: string
+          selected_to: string
+        }
+        Returns: {
+          cash_amount: number
+          closed_shift_count: number
+          location_code: string
+          location_id: string
+          location_name: string
+          total_income: number
+          yape_amount: number
+        }[]
+      }
+      management_period_product_sales: {
+        Args: {
+          selected_from: string
+          selected_location_id?: string
+          selected_to: string
+        }
+        Returns: {
+          calculated_sales: number
+          product_code: string
+          product_id: string
+          product_name: string
+          unit_type: Database["public"]["Enums"]["product_unit"]
+        }[]
+      }
       management_reconciliation_report: {
         Args: {
           selected_date: string

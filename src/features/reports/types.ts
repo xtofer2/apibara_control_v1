@@ -36,3 +36,12 @@ export type MonthlyLocationIncomeRow =
 
 export type MonthlyProductSalesRow =
   Database["public"]["Functions"]["management_monthly_product_sales"]["Returns"][number];
+
+export type PeriodDailyIncomeRow =
+  Database["public"]["Functions"]["management_period_daily_income"]["Returns"][number];
+
+export type PeriodLocationIncomeRow =
+  Database["public"]["Functions"]["management_period_location_income"]["Returns"][number];
+
+export type PeriodProductSalesRow =
+  Database["public"]["Functions"]["management_period_product_sales"]["Returns"][number];
